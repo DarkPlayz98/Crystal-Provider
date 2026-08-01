@@ -3,177 +3,365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crystal API | Admin</title>
+    <title>Crystal API | Admin Console</title>
     <style>
-        /* Sleek iOS Glassmorphism UI */
+        /* Sleek iOS Glassmorphism Design */
+        :root {
+            --primary: #007aff;
+            --primary-hover: #005bb5;
+            --success: #34c759;
+            --danger: #ff3b30;
+            --bg-glass: rgba(255, 255, 255, 0.70);
+            --border-glass: rgba(255, 255, 255, 0.5);
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
             margin: 0;
-            padding: 20px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            color: #1d1d1f;
+            color: #1e293b;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
         }
 
         .glass-panel {
-            background: rgba(255, 255, 255, 0.65);
+            background: var(--bg-glass);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 24px;
-            padding: 24px;
-            width: 100%;
-            max-width: 450px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            margin-bottom: 24px;
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             box-sizing: border-box;
         }
 
         h2 {
-            margin-top: 0;
-            font-size: 22px;
+            margin: 0 0 6px 0;
+            font-size: 20px;
             font-weight: 600;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        p { font-size: 14px; color: #515154; margin-bottom: 16px; }
+        p { font-size: 13px; color: #64748b; margin: 0 0 16px 0; }
 
-        input {
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #475569;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        input, textarea {
             width: 100%;
-            padding: 14px;
+            padding: 12px 14px;
             border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 14px;
+            border-radius: 12px;
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 15px;
             background: rgba(255,255,255,0.9);
             outline: none;
-            transition: border 0.2s;
-            margin-bottom: 16px;
+            transition: all 0.2s ease;
+            margin-bottom: 14px;
+            font-family: inherit;
         }
         
-        input:focus { border-color: #007aff; }
+        input:focus, textarea:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+        }
 
         button {
             width: 100%;
-            padding: 14px;
-            background: #007aff;
+            padding: 13px;
+            background: var(--primary);
             color: white;
             border: none;
-            border-radius: 14px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
 
-        button:active { background: #005bb5; transform: scale(0.98); }
+        button:active { transform: scale(0.98); background: var(--primary-hover); }
 
-        .key-box {
-            margin-top: 16px;
+        .btn-copy {
+            background: #334155;
+            padding: 8px 12px;
+            font-size: 13px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-copy.copied {
+            background: var(--success);
+        }
+
+        /* Result & Output Containers */
+        .key-result-box {
+            margin-top: 14px;
             padding: 14px;
-            background: rgba(0,0,0,0.04);
+            background: rgba(15, 23, 42, 0.05);
             border-radius: 12px;
-            font-family: monospace;
-            font-size: 14px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 13px;
             word-break: break-all;
             display: none;
-            border: 1px dashed rgba(0,0,0,0.2);
+            border: 1px dashed rgba(0,0,0,0.15);
         }
 
-        /* Table Styles for Models */
+        .test-output {
+            margin-top: 14px;
+            padding: 12px;
+            background: #0f172a;
+            color: #38bdf8;
+            border-radius: 12px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        /* Logs Console */
+        .logs-box {
+            background: #090d16;
+            color: #94a3b8;
+            border-radius: 12px;
+            padding: 12px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 12px;
+            max-height: 180px;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .log-entry {
+            margin-bottom: 6px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 4px;
+        }
+
+        .log-time { color: #64748b; }
+        .log-success { color: var(--success); }
+        .log-error { color: var(--danger); }
+        .log-info { color: #38bdf8; }
+
+        /* Tables */
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12px;
         }
         th, td {
             text-align: left;
-            padding: 10px 8px;
+            padding: 8px 6px;
             border-bottom: 1px solid rgba(0,0,0,0.05);
         }
-        th { font-weight: 600; color: #86868b; }
-        code { background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 6px; font-family: monospace; }
+        th { font-weight: 600; color: #64748b; }
+        code { background: rgba(0,0,0,0.06); padding: 2px 5px; border-radius: 4px; font-family: monospace; }
     </style>
 </head>
 <body>
 
-    <!-- KEY GENERATOR UI -->
-    <div class="glass-panel">
-        <h2>Generate API Key</h2>
-        <p>Enter your admin secret to authorize a new user key.</p>
-        
-        <input type="password" id="adminSecret" placeholder="Admin Secret Password">
-        <button onclick="generateKey()">Create New Key</button>
-        
-        <div id="resultBox" class="key-box"></div>
-    </div>
+    <div class="container">
 
-    <!-- MODEL REFERENCE UI -->
-    <div class="glass-panel">
-        <h2>Available Models</h2>
-        <p>Active Cloudflare LLMs and token limits.</p>
-        
-        <table>
-            <tr>
-                <th>Model ID</th>
-                <th>Tokens</th>
-            </tr>
-            <tr>
-                <td><code>@cf/mistral/mistral-7b-instruct-v0.1</code></td>
-                <td>8192</td>
-            </tr>
-            <tr>
-                <td><code>@cf/google/gemma-7b-it</code></td>
-                <td>8192</td>
-            </tr>
-            <tr>
-                <td><code>@cf/qwen/qwen1.5-14b-chat-awq</code></td>
-                <td>32768</td>
-            </tr>
-            <tr>
-                <td><code>@cf/microsoft/phi-2</code></td>
-                <td>2048 Tokens</td>
-            </tr>
-        </table>
+        <!-- 1. KEY GENERATOR -->
+        <div class="glass-panel">
+            <h2>🔑 Key Generator</h2>
+            <p>Generate & store API keys directly into KV.</p>
+            
+            <label>Admin Password</label>
+            <input type="password" id="adminSecret" placeholder="Enter crystal_admin_2026">
+            <button onclick="generateKey()">Generate New API Key</button>
+            
+            <div id="keyBox" class="key-result-box">
+                <div id="keyText"></div>
+                <button id="copyBtn" class="btn-copy" onclick="copyKey()">📋 Copy Key</button>
+            </div>
+        </div>
+
+        <!-- 2. LIVE API TESTER -->
+        <div class="glass-panel">
+            <h2>⚡ Live API Tester</h2>
+            <p>Test any generated key instantly against the AI worker.</p>
+            
+            <label>API Key</label>
+            <input type="text" id="testApiKey" placeholder="cry_live_...">
+            
+            <label>Test Prompt</label>
+            <textarea id="testPrompt" rows="2" placeholder="Ask something...">Explain APIs in one sentence.</textarea>
+            
+            <button onclick="runApiTest()">🚀 Send Test Request</button>
+            
+            <div id="testOutput" class="test-output"></div>
+        </div>
+
+        <!-- 3. LIVE ACTIVITY LOGS -->
+        <div class="glass-panel">
+            <h2>📜 Activity & Session Logs</h2>
+            <p>Live HTTP status and API response metrics.</p>
+            
+            <div id="logsConsole" class="logs-box">
+                <div class="log-entry"><span class="log-time">[System]</span> Console initialized and ready.</div>
+            </div>
+        </div>
+
+        <!-- 4. MODEL REFERENCE -->
+        <div class="glass-panel">
+            <h2>🤖 Active Models</h2>
+            <table>
+                <tr><th>Model ID</th><th>Tokens</th></tr>
+                <tr><td><code>@cf/meta/llama-3.1-8b-instruct-fp8-fast</code></td><td>8192</td></tr>
+                <tr><td><code>@cf/mistral/mistral-7b-instruct-v0.1</code></td><td>8192</td></tr>
+                <tr><td><code>@cf/qwen/qwen1.5-14b-chat-awq</code></td><td>32768</td></tr>
+            </table>
+        </div>
+
     </div>
 
     <script>
+        const API_BASE_URL = "https://crystal-api.baddampujithareddy19.workers.dev";
+        let lastGeneratedKey = "";
+
+        // Helper: Add formatted log entry
+        function log(message, type = "info") {
+            const consoleEl = document.getElementById("logsConsole");
+            const time = new Date().toLocaleTimeString();
+            const logClass = type === "success" ? "log-success" : type === "error" ? "log-error" : "log-info";
+            
+            const entry = document.createElement("div");
+            entry.className = "log-entry";
+            entry.innerHTML = `<span class="log-time">[${time}]</span> <span class="${logClass}">${message}</span>`;
+            
+            consoleEl.prepend(entry);
+        }
+
+        // 1. GENERATE KEY FUNCTION
         async function generateKey() {
-            const secret = document.getElementById('adminSecret').value;
-            const resultBox = document.getElementById('resultBox');
+            const secret = document.getElementById('adminSecret').value.trim();
+            const keyBox = document.getElementById('keyBox');
+            const keyText = document.getElementById('keyText');
             
             if (!secret) {
-                alert("Please enter the Admin Secret!");
+                alert("Please enter your Admin Password!");
                 return;
             }
 
-            resultBox.style.display = "block";
-            resultBox.innerHTML = "Generating securely...";
-            resultBox.style.color = "#515154";
+            keyBox.style.display = "block";
+            keyText.innerText = "Generating key...";
+            log("Sending key generation request to Worker...", "info");
 
             try {
-                // REPLACE THIS URL WITH YOUR ACTUAL WORKER URL
-                const response = await fetch("https://crystal-api.baddampujithareddy19.workers.dev/v1/create-key", {
+                const res = await fetch(`${API_BASE_URL}/v1/create-key`, {
                     method: "POST",
-                    headers: {
-                        "X-Admin-Secret": secret
-                    }
+                    headers: { "X-Admin-Secret": secret }
                 });
 
-                const data = await response.json();
+                const data = await res.json();
 
                 if (data.status === "success") {
-                    resultBox.innerHTML = `<strong>Success!</strong><br><br>${data.api_key}<br><br><span style="font-size:12px; color:#86868b;">Copied to database.</span>`;
-                    resultBox.style.color = "#000";
+                    lastGeneratedKey = data.api_key;
+                    keyText.innerHTML = `<strong>Created Key:</strong><br>${data.api_key}`;
+                    
+                    // Auto-fill into Tester
+                    document.getElementById('testApiKey').value = data.api_key;
+                    
+                    log(`Key Created Successfully: ${data.api_key.substring(0, 15)}...`, "success");
                 } else {
-                    resultBox.innerHTML = `<span style="color:#ff3b30">Error: ${data.error}</span>`;
+                    keyText.innerText = "Error: " + (data.error || "Failed to create key");
+                    log(`Key Generation Failed: ${data.error}`, "error");
+                }
+            } catch (err) {
+                keyText.innerText = "Network Error! Check your API URL.";
+                log(`Network Error during key generation`, "error");
+            }
+        }
+
+        // 2. COPY KEY FUNCTION
+        function copyKey() {
+            if (!lastGeneratedKey) return;
+            
+            navigator.clipboard.writeText(lastGeneratedKey).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.innerText = "✅ Copied to Clipboard!";
+                btn.classList.add('copied');
+                
+                log("Key copied to clipboard", "success");
+
+                setTimeout(() => {
+                    btn.innerText = "📋 Copy Key";
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(() => {
+                log("Failed to copy automatically. Please select text manually.", "error");
+            });
+        }
+
+        // 3. RUN API TEST FUNCTION
+        async function runApiTest() {
+            const apiKey = document.getElementById('testApiKey').value.trim();
+            const promptText = document.getElementById('testPrompt').value.trim();
+            const outputEl = document.getElementById('testOutput');
+
+            if (!apiKey) {
+                alert("Please enter or generate an API key first!");
+                return;
+            }
+
+            outputEl.style.display = "block";
+            outputEl.innerText = "Sending prompt to AI...";
+            const startTime = performance.now();
+
+            log(`Testing API Key [${apiKey.substring(0, 12)}...]`, "info");
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/`, {
+                    method: "POST",
+                    headers: {
+                        "X-Crystal-Key": apiKey,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ prompt: promptText })
+                });
+
+                const endTime = performance.now();
+                const latency = Math.round(endTime - startTime);
+                const data = await res.json();
+
+                if (data.status === "success") {
+                    outputEl.innerText = `[${res.status} OK - ${latency}ms]\n\nDeveloper: ${data.developer}\nResult: ${data.result}`;
+                    log(`API Request Successful (HTTP ${res.status} - ${latency}ms)`, "success");
+                } else {
+                    outputEl.innerText = `[HTTP ${res.status} Error]\n\n${JSON.stringify(data, null, 2)}`;
+                    log(`API Returned Error (HTTP ${res.status}): ${data.error}`, "error");
                 }
 
             } catch (err) {
-                resultBox.innerHTML = `<span style="color:#ff3b30">Network Error. Is the API URL correct?</span>`;
+                outputEl.innerText = "Network Error! Could not reach Worker.";
+                log(`Network error while contacting ${API_BASE_URL}`, "error");
             }
         }
     </script>
