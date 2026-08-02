@@ -2,6 +2,11 @@ name = "crystal-api"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 
+# 1. Binds Cloudflare Workers AI Engine
+[ai]
+binding = "AI"
+
+# 2. Binds your KV Database for API Keys
 [[kv_namespaces]]
 binding = "CRYSTAL_KEYS"
 id = "86d2e477033543a780c2b9b81166ac32"
