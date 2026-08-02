@@ -2,368 +2,420 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crystal API | Admin Console</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Crystal Admin</title>
     <style>
-        /* Sleek iOS Glassmorphism Design */
         :root {
-            --primary: #007aff;
-            --primary-hover: #005bb5;
-            --success: #34c759;
-            --danger: #ff3b30;
-            --bg-glass: rgba(255, 255, 255, 0.70);
-            --border-glass: rgba(255, 255, 255, 0.5);
+            --bg: #090a0f;
+            --card-bg: rgba(22, 27, 38, 0.75);
+            --border: rgba(255, 255, 255, 0.08);
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
         }
 
+        * { box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
             margin: 0;
-            padding: 16px;
+            padding: 12px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 520px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            color: #1e293b;
-            box-sizing: border-box;
+            gap: 12px;
         }
 
-        .container {
-            width: 100%;
-            max-width: 480px;
-        }
-
-        .glass-panel {
-            background: var(--bg-glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            box-sizing: border-box;
-        }
-
-        h2 {
-            margin: 0 0 6px 0;
-            font-size: 20px;
-            font-weight: 600;
-            letter-spacing: -0.4px;
+        /* Minimalist Navigation Bar */
+        .nav-tabs {
             display: flex;
-            align-items: center;
-            gap: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 4px;
+            gap: 4px;
+            backdrop-filter: blur(12px);
         }
 
-        p { font-size: 13px; color: #64748b; margin: 0 0 16px 0; }
+        .tab-btn {
+            flex: 1;
+            padding: 10px 0;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+        }
+
+        /* Card Sections */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 18px;
+            backdrop-filter: blur(16px);
+        }
+
+        h3 {
+            margin: 0 0 6px 0;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        p {
+            margin: 0 0 14px 0;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
 
         label {
-            font-size: 12px;
+            display: block;
+            font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #475569;
+            color: var(--text-muted);
             margin-bottom: 6px;
-            display: block;
         }
 
-        input, textarea {
+        input, textarea, select {
             width: 100%;
-            padding: 12px 14px;
-            border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 12px;
-            box-sizing: border-box;
-            font-size: 15px;
-            background: rgba(255,255,255,0.9);
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 14px;
             outline: none;
-            transition: all 0.2s ease;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             font-family: inherit;
         }
-        
-        input:focus, textarea:focus { 
-            border-color: var(--primary); 
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+
+        input:focus, textarea:focus { border-color: var(--accent); }
+
+        .row-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
         button {
             width: 100%;
-            padding: 13px;
-            background: var(--primary);
+            padding: 12px;
+            background: var(--accent);
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 15px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
+            transition: background 0.2s;
         }
 
-        button:active { transform: scale(0.98); background: var(--primary-hover); }
+        button:active { background: var(--accent-hover); }
 
-        .btn-copy {
-            background: #334155;
-            padding: 8px 12px;
-            font-size: 13px;
-            border-radius: 8px;
+        .code-editor {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 12px;
+            min-height: 280px;
+            background: #05070a;
+            color: #38bdf8;
+            line-height: 1.5;
+            white-space: pre;
+            tab-size: 2;
+        }
+
+        /* Output & Console Boxes */
+        .output-box {
             margin-top: 10px;
-        }
-
-        .btn-copy.copied {
-            background: var(--success);
-        }
-
-        /* Result & Output Containers */
-        .key-result-box {
-            margin-top: 14px;
-            padding: 14px;
-            background: rgba(15, 23, 42, 0.05);
-            border-radius: 12px;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            font-size: 13px;
+            padding: 10px;
+            background: #05070a;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #10b981;
             word-break: break-all;
             display: none;
-            border: 1px dashed rgba(0,0,0,0.15);
         }
 
-        .test-output {
-            margin-top: 14px;
-            padding: 12px;
-            background: #0f172a;
-            color: #38bdf8;
-            border-radius: 12px;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            font-size: 13px;
-            line-height: 1.5;
-            white-space: pre-wrap;
-            max-height: 200px;
+        .logs-console {
+            background: #05070a;
+            padding: 10px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 11px;
+            height: 200px;
             overflow-y: auto;
-            display: none;
+            color: var(--text-muted);
         }
 
-        /* Logs Console */
-        .logs-box {
-            background: #090d16;
-            color: #94a3b8;
-            border-radius: 12px;
-            padding: 12px;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            font-size: 12px;
-            max-height: 180px;
-            overflow-y: auto;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .log-entry {
-            margin-bottom: 6px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 4px;
-        }
-
+        .log-item { margin-bottom: 4px; }
         .log-time { color: #64748b; }
-        .log-success { color: var(--success); }
-        .log-error { color: var(--danger); }
-        .log-info { color: #38bdf8; }
-
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-        th, td {
-            text-align: left;
-            padding: 8px 6px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        th { font-weight: 600; color: #64748b; }
-        code { background: rgba(0,0,0,0.06); padding: 2px 5px; border-radius: 4px; font-family: monospace; }
+        .log-err { color: var(--danger); }
+        .log-ok { color: var(--success); }
     </style>
 </head>
 <body>
 
-    <div class="container">
+<div class="app-container">
 
-        <!-- 1. KEY GENERATOR -->
-        <div class="glass-panel">
-            <h2>🔑 Key Generator</h2>
-            <p>Generate & store API keys directly into KV.</p>
-            
-            <label>Admin Password</label>
-            <input type="password" id="adminSecret" placeholder="Enter crystal_admin_2026">
-            <button onclick="generateKey()">Generate New API Key</button>
-            
-            <div id="keyBox" class="key-result-box">
-                <div id="keyText"></div>
-                <button id="copyBtn" class="btn-copy" onclick="copyKey()">📋 Copy Key</button>
-            </div>
-        </div>
-
-        <!-- 2. LIVE API TESTER -->
-        <div class="glass-panel">
-            <h2>⚡ Live API Tester</h2>
-            <p>Test any generated key instantly against the AI worker.</p>
-            
-            <label>API Key</label>
-            <input type="text" id="testApiKey" placeholder="cry_live_...">
-            
-            <label>Test Prompt</label>
-            <textarea id="testPrompt" rows="2" placeholder="Ask something...">Explain APIs in one sentence.</textarea>
-            
-            <button onclick="runApiTest()">🚀 Send Test Request</button>
-            
-            <div id="testOutput" class="test-output"></div>
-        </div>
-
-        <!-- 3. LIVE ACTIVITY LOGS -->
-        <div class="glass-panel">
-            <h2>📜 Activity & Session Logs</h2>
-            <p>Live HTTP status and API response metrics.</p>
-            
-            <div id="logsConsole" class="logs-box">
-                <div class="log-entry"><span class="log-time">[System]</span> Console initialized and ready.</div>
-            </div>
-        </div>
-
-        <!-- 4. MODEL REFERENCE -->
-        <div class="glass-panel">
-            <h2>🤖 Active Models</h2>
-            <table>
-                <tr><th>Model ID</th><th>Tokens</th></tr>
-                <tr><td><code>@cf/meta/llama-3.1-8b-instruct-fp8-fast</code></td><td>8192</td></tr>
-                <tr><td><code>@cf/mistral/mistral-7b-instruct-v0.1</code></td><td>8192</td></tr>
-                <tr><td><code>@cf/qwen/qwen1.5-14b-chat-awq</code></td><td>32768</td></tr>
-            </table>
-        </div>
-
+    <!-- Segmented Navigation Bar -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('keys')">🔑 Keys</button>
+        <button class="tab-btn" onclick="switchTab('editor')">📝 Worker</button>
+        <button class="tab-btn" onclick="switchTab('tester')">⚡ Tester</button>
+        <button class="tab-btn" onclick="switchTab('logs')">📜 Logs</button>
     </div>
 
-    <script>
-        const API_BASE_URL = "https://crystal-api.baddampujithareddy19.workers.dev";
-        let lastGeneratedKey = "";
-
-        // Helper: Add formatted log entry
-        function log(message, type = "info") {
-            const consoleEl = document.getElementById("logsConsole");
-            const time = new Date().toLocaleTimeString();
-            const logClass = type === "success" ? "log-success" : type === "error" ? "log-error" : "log-info";
+    <!-- TAB 1: KEYS -->
+    <div id="tab-keys" class="tab-content active">
+        <div class="card">
+            <h3>Key Generator</h3>
+            <p>Generate API key and automatically sync to Cloudflare KV.</p>
             
-            const entry = document.createElement("div");
-            entry.className = "log-entry";
-            entry.innerHTML = `<span class="log-time">[${time}]</span> <span class="${logClass}">${message}</span>`;
+            <label>Admin Password</label>
+            <input type="password" id="adminSecret" placeholder="crystal_admin_2026">
+            <button onclick="generateKey()">Generate API Key</button>
+
+            <div id="keyOutput" class="output-box"></div>
+        </div>
+    </div>
+
+    <!-- TAB 2: WORKER.JS DIRECT EDITOR -->
+    <div id="tab-editor" class="tab-content">
+        <div class="card">
+            <h3>Worker Script Editor</h3>
+            <p>Edit script and deploy directly to Cloudflare via API.</p>
             
-            consoleEl.prepend(entry);
-        }
+            <div class="row-grid">
+                <div>
+                    <label>Account ID</label>
+                    <input type="text" id="cfAccountId" placeholder="Cloudflare Account ID">
+                </div>
+                <div>
+                    <label>Script Name</label>
+                    <input type="text" id="cfScriptName" value="crystal-api">
+                </div>
+            </div>
 
-        // 1. GENERATE KEY FUNCTION
-        async function generateKey() {
-            const secret = document.getElementById('adminSecret').value.trim();
-            const keyBox = document.getElementById('keyBox');
-            const keyText = document.getElementById('keyText');
-            
-            if (!secret) {
-                alert("Please enter your Admin Password!");
-                return;
-            }
+            <label>Global API Token</label>
+            <input type="password" id="cfApiToken" placeholder="Cloudflare API Token (Workers Edit)">
 
-            keyBox.style.display = "block";
-            keyText.innerText = "Generating key...";
-            log("Sending key generation request to Worker...", "info");
+            <label>worker.js Source Code</label>
+            <textarea id="workerCode" class="code-editor" spellcheck="false" placeholder="// Paste or type worker.js code here..."></textarea>
 
-            try {
-                const res = await fetch(`${API_BASE_URL}/v1/create-key`, {
-                    method: "POST",
-                    headers: { "X-Admin-Secret": secret }
-                });
+            <button onclick="deployWorker()">🚀 Deploy Live to Cloudflare</button>
+            <div id="deployOutput" class="output-box"></div>
+        </div>
+    </div>
 
-                const data = await res.json();
+    <!-- TAB 3: LIVE TESTER & PARAMETERS -->
+    <div id="tab-tester" class="tab-content">
+        <div class="card">
+            <h3>AI API Tester</h3>
+            <p>Test responses with max tokens and temperature controls.</p>
 
-                if (data.status === "success") {
-                    lastGeneratedKey = data.api_key;
-                    keyText.innerHTML = `<strong>Created Key:</strong><br>${data.api_key}`;
-                    
-                    // Auto-fill into Tester
-                    document.getElementById('testApiKey').value = data.api_key;
-                    
-                    log(`Key Created Successfully: ${data.api_key.substring(0, 15)}...`, "success");
-                } else {
-                    keyText.innerText = "Error: " + (data.error || "Failed to create key");
-                    log(`Key Generation Failed: ${data.error}`, "error");
-                }
-            } catch (err) {
-                keyText.innerText = "Network Error! Check your API URL.";
-                log(`Network Error during key generation`, "error");
-            }
-        }
+            <label>API Key</label>
+            <input type="text" id="testApiKey" placeholder="cry_live_...">
 
-        // 2. COPY KEY FUNCTION
-        function copyKey() {
-            if (!lastGeneratedKey) return;
-            
-            navigator.clipboard.writeText(lastGeneratedKey).then(() => {
-                const btn = document.getElementById('copyBtn');
-                btn.innerText = "✅ Copied to Clipboard!";
-                btn.classList.add('copied');
-                
-                log("Key copied to clipboard", "success");
+            <div class="row-grid">
+                <div>
+                    <label>Max Tokens</label>
+                    <input type="number" id="maxTokens" value="2048" min="128" max="4096">
+                </div>
+                <div>
+                    <label>Temperature (0 - 1.0)</label>
+                    <input type="number" id="temperature" value="0.7" step="0.1" min="0" max="1">
+                </div>
+            </div>
 
-                setTimeout(() => {
-                    btn.innerText = "📋 Copy Key";
-                    btn.classList.remove('copied');
-                }, 2000);
-            }).catch(() => {
-                log("Failed to copy automatically. Please select text manually.", "error");
+            <label>Test Prompt</label>
+            <textarea id="testPrompt" rows="3" placeholder="Type prompt...">Write a complete, detailed essay explaining APIs.</textarea>
+
+            <button onclick="runTest()">Run Test</button>
+
+            <div id="testResult" class="output-box"></div>
+        </div>
+    </div>
+
+    <!-- TAB 4: LOGS -->
+    <div id="tab-logs" class="tab-content">
+        <div class="card">
+            <h3>Console Activity</h3>
+            <p>Real-time execution logs and HTTP metrics.</p>
+            <div id="logsConsole" class="logs-console"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const API_BASE_URL = "https://crystal-api.baddampujithareddy19.workers.dev";
+
+    // Auto-load saved Cloudflare credentials
+    document.addEventListener("DOMContentLoaded", () => {
+        if(localStorage.getItem("cf_account_id")) document.getElementById("cfAccountId").value = localStorage.getItem("cf_account_id");
+        if(localStorage.getItem("cf_api_token")) document.getElementById("cfApiToken").value = localStorage.getItem("cf_api_token");
+        if(localStorage.getItem("cf_script_name")) document.getElementById("cfScriptName").value = localStorage.getItem("cf_script_name");
+        addLog("Admin console ready.");
+    });
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        event.target.classList.add('active');
+        document.getElementById(`tab-${tabId}`).classList.add('active');
+    }
+
+    function addLog(msg, type = 'info') {
+        const consoleEl = document.getElementById("logsConsole");
+        const time = new Date().toLocaleTimeString();
+        const cls = type === 'ok' ? 'log-ok' : type === 'err' ? 'log-err' : '';
+        consoleEl.innerHTML = `<div class="log-item"><span class="log-time">[${time}]</span> <span class="${cls}">${msg}</span></div>` + consoleEl.innerHTML;
+    }
+
+    // 1. Key Generator
+    async function generateKey() {
+        const secret = document.getElementById("adminSecret").value;
+        const out = document.getElementById("keyOutput");
+        if(!secret) return alert("Enter admin password.");
+
+        out.style.display = "block";
+        out.innerText = "Creating key...";
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/v1/create-key`, {
+                method: "POST",
+                headers: { "X-Admin-Secret": secret }
             });
+            const data = await res.json();
+            if(data.status === "success") {
+                out.innerHTML = `Created Key:<br><strong>${data.api_key}</strong>`;
+                document.getElementById("testApiKey").value = data.api_key;
+                addLog(`Generated key: ${data.api_key.substring(0, 15)}...`, "ok");
+            } else {
+                out.innerText = "Error: " + data.error;
+                addLog(`Key generation failed: ${data.error}`, "err");
+            }
+        } catch(e) {
+            out.innerText = "Network Error!";
+            addLog("Network error generating key.", "err");
+        }
+    }
+
+    // 2. Direct Cloudflare Deployer
+    async function deployWorker() {
+        const accountId = document.getElementById("cfAccountId").value.trim();
+        const apiToken = document.getElementById("cfApiToken").value.trim();
+        const scriptName = document.getElementById("cfScriptName").value.trim();
+        const code = document.getElementById("workerCode").value;
+        const out = document.getElementById("deployOutput");
+
+        if(!accountId || !apiToken || !scriptName || !code) {
+            return alert("Fill in Account ID, API Token, Script Name, and Code!");
         }
 
-        // 3. RUN API TEST FUNCTION
-        async function runApiTest() {
-            const apiKey = document.getElementById('testApiKey').value.trim();
-            const promptText = document.getElementById('testPrompt').value.trim();
-            const outputEl = document.getElementById('testOutput');
+        // Save credentials locally
+        localStorage.setItem("cf_account_id", accountId);
+        localStorage.setItem("cf_api_token", apiToken);
+        localStorage.setItem("cf_script_name", scriptName);
 
-            if (!apiKey) {
-                alert("Please enter or generate an API key first!");
-                return;
+        out.style.display = "block";
+        out.innerText = "Deploying code directly to Cloudflare...";
+        addLog(`Deploying script '${scriptName}' to Cloudflare...`);
+
+        try {
+            const cfEndpoint = `https://api.cloudflare.com/client/v4/accounts/${accountId}/workers/scripts/${scriptName}`;
+            const res = await fetch(cfEndpoint, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${apiToken}`,
+                    "Content-Type": "application/javascript"
+                },
+                body: code
+            });
+
+            const data = await res.json();
+            if(data.success) {
+                out.innerText = "✅ Deployed successfully! Worker is live.";
+                addLog("Worker script updated live on Cloudflare!", "ok");
+            } else {
+                out.innerText = "Deploy Failed: " + JSON.stringify(data.errors);
+                addLog("Deployment failed: " + JSON.stringify(data.errors), "err");
             }
-
-            outputEl.style.display = "block";
-            outputEl.innerText = "Sending prompt to AI...";
-            const startTime = performance.now();
-
-            log(`Testing API Key [${apiKey.substring(0, 12)}...]`, "info");
-
-            try {
-                const res = await fetch(`${API_BASE_URL}/`, {
-                    method: "POST",
-                    headers: {
-                        "X-Crystal-Key": apiKey,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ prompt: promptText })
-                });
-
-                const endTime = performance.now();
-                const latency = Math.round(endTime - startTime);
-                const data = await res.json();
-
-                if (data.status === "success") {
-                    outputEl.innerText = `[${res.status} OK - ${latency}ms]\n\nDeveloper: ${data.developer}\nResult: ${data.result}`;
-                    log(`API Request Successful (HTTP ${res.status} - ${latency}ms)`, "success");
-                } else {
-                    outputEl.innerText = `[HTTP ${res.status} Error]\n\n${JSON.stringify(data, null, 2)}`;
-                    log(`API Returned Error (HTTP ${res.status}): ${data.error}`, "error");
-                }
-
-            } catch (err) {
-                outputEl.innerText = "Network Error! Could not reach Worker.";
-                log(`Network error while contacting ${API_BASE_URL}`, "error");
-            }
+        } catch(e) {
+            out.innerText = "Deployment failed. Ensure API token has Worker Edit permissions.";
+            addLog("Cloudflare API request failed.", "err");
         }
-    </script>
+    }
+
+    // 3. Tester with Token & Temp Controls
+    async function runTest() {
+        const apiKey = document.getElementById("testApiKey").value.trim();
+        const prompt = document.getElementById("testPrompt").value;
+        const maxTokens = parseInt(document.getElementById("maxTokens").value);
+        const temperature = parseFloat(document.getElementById("temperature").value);
+        const out = document.getElementById("testResult");
+
+        if(!apiKey) return alert("Enter an API Key.");
+
+        out.style.display = "block";
+        out.innerText = "Generating AI Response...";
+        addLog(`Running prompt (Max Tokens: ${maxTokens}, Temp: ${temperature})...`);
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/`, {
+                method: "POST",
+                headers: {
+                    "X-Crystal-Key": apiKey,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    max_tokens: maxTokens,
+                    temperature: temperature
+                })
+            });
+
+            const data = await res.json();
+            if(data.status === "success") {
+                out.innerText = `Result:\n\n${data.result}`;
+                addLog("AI Response received without truncating.", "ok");
+            } else {
+                out.innerText = "Error: " + data.error;
+                addLog("Test error: " + data.error, "err");
+            }
+        } catch(e) {
+            out.innerText = "Network Error.";
+            addLog("Network error during test.", "err");
+        }
+    }
+</script>
+
 </body>
 </html>
