@@ -2,7 +2,6 @@ name = "crystal-api"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 
-[kv_namespaces]
-  - binding = "CRYSTAL_KEYS"
-    id = "86d2e477033543a780c2b9b81166ac32"
-    
+[[kv_namespaces]]
+binding = "CRYSTAL_KEYS"
+id = "86d2e477033543a780c2b9b81166ac32"
