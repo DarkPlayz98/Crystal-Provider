@@ -3,27 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>Crystal Admin</title>
+    <title>Crystal Provider | Developer Console</title>
+    <!-- Material Symbols & Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
     <style>
+        /* Material 3 Full White Palette */
         :root {
-            --bg: #090a0f;
-            --card-bg: rgba(22, 27, 38, 0.75);
-            --border: rgba(255, 255, 255, 0.08);
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --success: #10b981;
-            --danger: #ef4444;
+            --md-sys-color-background: #ffffff;
+            --md-sys-color-surface: #ffffff;
+            --md-sys-color-surface-variant: #f0f4f9;
+            --md-sys-color-surface-container: #f8f9ff;
+            --md-sys-color-primary: #0b57d0;
+            --md-sys-color-primary-hover: #0842a0;
+            --md-sys-color-on-primary: #ffffff;
+            --md-sys-color-primary-container: #d3e3fd;
+            --md-sys-color-on-primary-container: #041e49;
+            --md-sys-color-outline: #c7c6d0;
+            --md-sys-color-outline-variant: #e1e2ec;
+            --md-sys-color-on-surface: #1f1f1f;
+            --md-sys-color-on-surface-variant: #444746;
+            --md-sys-color-success: #146c2e;
+            --md-sys-color-success-container: #c4ebd0;
+            --md-sys-color-danger: #b3261e;
         }
 
         * { box-sizing: border-box; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--md-sys-color-surface-container);
+            color: var(--md-sys-color-on-surface);
             margin: 0;
-            padding: 12px;
+            padding: 16px;
             display: flex;
             justify-content: center;
             min-height: 100vh;
@@ -31,213 +45,485 @@
 
         .app-container {
             width: 100%;
-            max-width: 520px;
+            max-width: 600px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
         }
 
-        /* Minimalist Navigation Bar */
+        /* Material 3 Top Header */
+        .brand-header {
+            text-align: center;
+            padding: 8px 0;
+        }
+
+        .brand-header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--md-sys-color-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-header p {
+            margin: 4px 0 0 0;
+            font-size: 13px;
+            color: var(--md-sys-color-on-surface-variant);
+        }
+
+        /* Material 3 Scrollable Pill Tabs */
+        .nav-wrapper {
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding-bottom: 4px;
+        }
+        .nav-wrapper::-webkit-scrollbar { display: none; }
+
         .nav-tabs {
-            display: flex;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 14px;
+            display: inline-flex;
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 28px;
             padding: 4px;
             gap: 4px;
-            backdrop-filter: blur(12px);
         }
 
         .tab-btn {
-            flex: 1;
-            padding: 10px 0;
+            padding: 10px 18px;
             border: none;
             background: transparent;
-            color: var(--text-muted);
+            color: var(--md-sys-color-on-surface-variant);
             font-size: 13px;
-            font-weight: 600;
-            border-radius: 10px;
+            font-weight: 500;
+            border-radius: 20px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
+            transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
         }
 
         .tab-btn.active {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-main);
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            font-weight: 700;
         }
 
-        /* Card Sections */
+        /* Material 3 Cards */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
         .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 18px;
-            backdrop-filter: blur(16px);
+            background: var(--md-sys-color-surface);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
         }
 
-        h3 {
+        h2 {
             margin: 0 0 6px 0;
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: -0.3px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--md-sys-color-on-surface);
         }
 
-        p {
-            margin: 0 0 14px 0;
+        p.subtitle {
+            margin: 0 0 16px 0;
+            font-size: 13px;
+            color: var(--md-sys-color-on-surface-variant);
+            line-height: 1.4;
+        }
+
+        /* Material 3 Badge */
+        .badge-quota {
+            display: inline-flex;
+            align-items: center;
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            padding: 6px 12px;
+            border-radius: 12px;
             font-size: 12px;
-            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 16px;
         }
 
+        /* Form Inputs */
         label {
             display: block;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface-variant);
             margin-bottom: 6px;
         }
 
         input, textarea, select {
             width: 100%;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-main);
+            padding: 12px 16px;
+            background: var(--md-sys-color-surface);
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 12px;
+            color: var(--md-sys-color-on-surface);
             font-size: 14px;
             outline: none;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             font-family: inherit;
+            transition: border-color 0.2s;
         }
 
-        input:focus, textarea:focus { border-color: var(--accent); }
+        input:focus, textarea:focus {
+            border-color: var(--md-sys-color-primary);
+            border-width: 2px;
+            padding: 11px 15px;
+        }
 
         .row-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
         }
 
-        button {
+        /* Buttons */
+        button.btn-primary {
             width: 100%;
-            padding: 12px;
-            background: var(--accent);
-            color: white;
+            padding: 12px 24px;
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
             border: none;
-            border-radius: 10px;
+            border-radius: 20px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.1s;
         }
 
-        button:active { background: var(--accent-hover); }
+        button.btn-primary:active {
+            background: var(--md-sys-color-primary-hover);
+            transform: scale(0.98);
+        }
 
-        .code-editor {
-            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        button.btn-secondary {
+            background: var(--md-sys-color-surface-variant);
+            color: var(--md-sys-color-on-surface);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        /* Code Blocks & Tables */
+        .code-block {
+            font-family: 'Roboto Mono', monospace;
             font-size: 12px;
-            min-height: 280px;
-            background: #05070a;
-            color: #38bdf8;
+            background: #1e1f22;
+            color: #e3e2e6;
+            padding: 14px;
+            border-radius: 16px;
+            overflow-x: auto;
             line-height: 1.5;
             white-space: pre;
-            tab-size: 2;
+            margin-bottom: 16px;
         }
 
-        /* Output & Console Boxes */
         .output-box {
-            margin-top: 10px;
-            padding: 10px;
-            background: #05070a;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 12px;
-            color: #10b981;
+            margin-top: 14px;
+            padding: 14px;
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 12px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 13px;
+            color: var(--md-sys-color-on-surface);
             word-break: break-all;
             display: none;
         }
 
-        .logs-console {
-            background: #05070a;
-            padding: 10px;
-            border-radius: 10px;
-            font-family: monospace;
-            font-size: 11px;
-            height: 200px;
-            overflow-y: auto;
-            color: var(--text-muted);
+        /* Model Cards List */
+        .model-card {
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 12px;
+            background: var(--md-sys-color-surface);
         }
 
-        .log-item { margin-bottom: 4px; }
-        .log-time { color: #64748b; }
-        .log-err { color: var(--danger); }
-        .log-ok { color: var(--success); }
+        .model-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .model-name {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--md-sys-color-primary);
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .model-tokens {
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 8px;
+        }
+
+        .model-desc {
+            font-size: 12px;
+            color: var(--md-sys-color-on-surface-variant);
+            margin: 0;
+        }
+
+        /* Console */
+        .logs-console {
+            background: #111318;
+            padding: 14px;
+            border-radius: 16px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            height: 220px;
+            overflow-y: auto;
+            color: #c4c6d0;
+        }
+        .log-item { margin-bottom: 6px; }
+        .log-ok { color: #6ddb8c; }
+        .log-err { color: #ffb4ab; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
 
-    <!-- Segmented Navigation Bar -->
-    <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('keys')">🔑 Keys</button>
-        <button class="tab-btn" onclick="switchTab('editor')">📝 Worker</button>
-        <button class="tab-btn" onclick="switchTab('tester')">⚡ Tester</button>
-        <button class="tab-btn" onclick="switchTab('logs')">📜 Logs</button>
+    <!-- Header -->
+    <div class="brand-header">
+        <h1>Crystal Provider</h1>
+        <p>High-Performance Free AI Provider API</p>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav-wrapper">
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('keys', event)">🔑 Keys</button>
+            <button class="tab-btn" onclick="switchTab('models', event)">🤖 Models</button>
+            <button class="tab-btn" onclick="switchTab('instructions', event)">📖 Instructions</button>
+            <button class="tab-btn" onclick="switchTab('tester', event)">⚡ Tester</button>
+            <button class="tab-btn" onclick="switchTab('worker', event)">📝 Worker</button>
+            <button class="tab-btn" onclick="switchTab('logs', event)">📜 Logs</button>
+        </div>
     </div>
 
     <!-- TAB 1: KEYS -->
     <div id="tab-keys" class="tab-content active">
         <div class="card">
-            <h3>Key Generator</h3>
-            <p>Generate API key and automatically sync to Cloudflare KV.</p>
+            <h2>API Key Generator</h2>
+            <p class="subtitle">Generate secure keys for your apps. Each key comes pre-loaded with free tokens.</p>
+            
+            <div class="badge-quota">🎁 Quota: 20,000,000 Free Tokens / Key</div>
             
             <label>Admin Password</label>
             <input type="password" id="adminSecret" placeholder="crystal_admin_2026">
-            <button onclick="generateKey()">Generate API Key</button>
+            
+            <button class="btn-primary" onclick="generateKey()">Generate API Key</button>
 
             <div id="keyOutput" class="output-box"></div>
         </div>
     </div>
 
-    <!-- TAB 2: WORKER.JS DIRECT EDITOR -->
-    <div id="tab-editor" class="tab-content">
+    <!-- TAB 2: AVAILABLE MODELS (15 Models) -->
+    <div id="tab-models" class="tab-content">
         <div class="card">
-            <h3>Worker Script Editor</h3>
-            <p>Edit script and deploy directly to Cloudflare via API.</p>
-            
-            <div class="row-grid">
-                <div>
-                    <label>Account ID</label>
-                    <input type="text" id="cfAccountId" placeholder="Cloudflare Account ID">
+            <h2>Available Models (15)</h2>
+            <p class="subtitle">Active Cloudflare Workers AI models ready for your requests.</p>
+
+            <div id="modelsList">
+                <!-- 1 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/meta/llama-3.3-70b-instruct-fp8-fast</span>
+                        <span class="model-tokens">24,000 Tokens</span>
+                    </div>
+                    <p class="model-desc">Meta's flagship 70B model. High reasoning, coding, and instruction following.</p>
                 </div>
-                <div>
-                    <label>Script Name</label>
-                    <input type="text" id="cfScriptName" value="crystal-api">
+                <!-- 2 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/meta/llama-3.1-8b-instruct-fp8-fast</span>
+                        <span class="model-tokens">8,192 Tokens</span>
+                    </div>
+                    <p class="model-desc">Fast, standard default model for general chat and quick tasks.</p>
+                </div>
+                <!-- 3 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/meta/llama-3.2-3b-instruct</span>
+                        <span class="model-tokens">131,072 Tokens</span>
+                    </div>
+                    <p class="model-desc">Ultra-fast lightweight model with a massive 131k context window.</p>
+                </div>
+                <!-- 4 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/deepseek-ai/deepseek-r1-distill-qwen-32b</span>
+                        <span class="model-tokens">32,768 Tokens</span>
+                    </div>
+                    <p class="model-desc">DeepSeek R1 reasoning model distilled into Qwen 32B. Math & complex logic.</p>
+                </div>
+                <!-- 5 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/qwen/qwq-32b</span>
+                        <span class="model-tokens">32,768 Tokens</span>
+                    </div>
+                    <p class="model-desc">Qwen reasoning model competitive with frontier analytical models.</p>
+                </div>
+                <!-- 6 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/qwen/qwen2.5-coder-32b-instruct</span>
+                        <span class="model-tokens">32,768 Tokens</span>
+                    </div>
+                    <p class="model-desc">Specialized for code generation, bug fixing, and software architecture.</p>
+                </div>
+                <!-- 7 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/qwen/qwen1.5-14b-chat-awq</span>
+                        <span class="model-tokens">32,768 Tokens</span>
+                    </div>
+                    <p class="model-desc">Heavyweight logic, long-memory context, and multilingual chat.</p>
+                </div>
+                <!-- 8 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/google/gemma-7b-it</span>
+                        <span class="model-tokens">8,192 Tokens</span>
+                    </div>
+                    <p class="model-desc">Google's open 7B instruction-tuned model. Highly accurate.</p>
+                </div>
+                <!-- 9 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/google/gemma-2b-it</span>
+                        <span class="model-tokens">8,192 Tokens</span>
+                    </div>
+                    <p class="model-desc">Lightweight 2B Google model built for near-instant responses.</p>
+                </div>
+                <!-- 10 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/mistral/mistral-7b-instruct-v0.1</span>
+                        <span class="model-tokens">8,192 Tokens</span>
+                    </div>
+                    <p class="model-desc">High-speed conversational model with strong instruction adherence.</p>
+                </div>
+                <!-- 11 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/mistralai/mistral-small-3.1-24b-instruct</span>
+                        <span class="model-tokens">128,000 Tokens</span>
+                    </div>
+                    <p class="model-desc">Mistral 24B with 128k context for long document processing.</p>
+                </div>
+                <!-- 12 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/microsoft/phi-2</span>
+                        <span class="model-tokens">2,048 Tokens</span>
+                    </div>
+                    <p class="model-desc">Microsoft's compact 2.7B reasoning powerhouse for quick tasks.</p>
+                </div>
+                <!-- 13 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/tinyllama/tinyllama-1.1b-chat-v1.0</span>
+                        <span class="model-tokens">2,048 Tokens</span>
+                    </div>
+                    <p class="model-desc">Ultra-fast micro model ideal for lightweight mobile chatbots.</p>
+                </div>
+                <!-- 14 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/openchat/openchat-3.5-0106</span>
+                        <span class="model-tokens">8,192 Tokens</span>
+                    </div>
+                    <p class="model-desc">Fine-tuned open-source model optimized for natural conversation flow.</p>
+                </div>
+                <!-- 15 -->
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-name">@cf/defog/sqlcoder-7b-2</span>
+                        <span class="model-tokens">4,096 Tokens</span>
+                    </div>
+                    <p class="model-desc">Dedicated model for writing, optimizing, and explaining SQL queries.</p>
                 </div>
             </div>
-
-            <label>Global API Token</label>
-            <input type="password" id="cfApiToken" placeholder="Cloudflare API Token (Workers Edit)">
-
-            <label>worker.js Source Code</label>
-            <textarea id="workerCode" class="code-editor" spellcheck="false" placeholder="// Paste or type worker.js code here..."></textarea>
-
-            <button onclick="deployWorker()">🚀 Deploy Live to Cloudflare</button>
-            <div id="deployOutput" class="output-box"></div>
         </div>
     </div>
 
-    <!-- TAB 3: LIVE TESTER & PARAMETERS -->
+    <!-- TAB 3: INSTRUCTIONS -->
+    <div id="tab-instructions" class="tab-content">
+        <div class="card">
+            <h2>How to Use Crystal Provider</h2>
+            <p class="subtitle">Integrate your generated keys into any web browser, Discord bot, or mobile app.</p>
+
+            <div class="badge-quota">⚡ Each key gets 20,000,000 Tokens</div>
+
+            <h3>1. Authentication</h3>
+            <p class="subtitle">Pass your API key in the <code>X-Crystal-Key</code> header of your POST requests.</p>
+
+            <h3>2. API Endpoint</h3>
+            <div class="code-block">POST https://crystal-api.baddampujithareddy19.workers.dev/</div>
+
+            <h3>3. Code Examples</h3>
+
+            <label>JavaScript / Fetch (Web & Node)</label>
+            <div class="code-block">fetch("https://crystal-api.baddampujithareddy19.workers.dev/", {
+  method: "POST",
+  headers: {
+    "X-Crystal-Key": "YOUR_CRYSTAL_KEY",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    prompt: "Write a quick sorting algorithm in JS",
+    model: "@cf/meta/llama-3.1-8b-instruct-fp8-fast",
+    max_tokens: 2048,
+    temperature: 0.7
+  })
+})
+.then(res => res.json())
+.then(data => console.log(data.result));</div>
+
+            <label>Python (requests)</label>
+            <div class="code-block">import requests
+
+url = "https://crystal-api.baddampujithareddy19.workers.dev/"
+headers = {
+    "X-Crystal-Key": "YOUR_CRYSTAL_KEY",
+    "Content-Type": "application/json"
+}
+payload = {
+    "prompt": "Hello world!",
+    "max_tokens": 2048
+}
+
+response = requests.post(url, headers=headers, json=payload)
+print(response.json()["result"])</div>
+
+            <label>cURL</label>
+            <div class="code-block">curl -X POST https://crystal-api.baddampujithareddy19.workers.dev/ \
+  -H "X-Crystal-Key: YOUR_CRYSTAL_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Hi", "max_tokens": 1024}'</div>
+        </div>
+    </div>
+
+    <!-- TAB 4: TESTER -->
     <div id="tab-tester" class="tab-content">
         <div class="card">
-            <h3>AI API Tester</h3>
-            <p>Test responses with max tokens and temperature controls.</p>
+            <h2>Live API Tester</h2>
+            <p class="subtitle">Test your prompts against Cloudflare Workers AI.</p>
 
             <label>API Key</label>
             <input type="text" id="testApiKey" placeholder="cry_live_...">
@@ -245,28 +531,37 @@
             <div class="row-grid">
                 <div>
                     <label>Max Tokens</label>
-                    <input type="number" id="maxTokens" value="2048" min="128" max="4096">
+                    <input type="number" id="maxTokens" value="2048">
                 </div>
                 <div>
-                    <label>Temperature (0 - 1.0)</label>
-                    <input type="number" id="temperature" value="0.7" step="0.1" min="0" max="1">
+                    <label>Temperature</label>
+                    <input type="number" id="temperature" value="0.7" step="0.1">
                 </div>
             </div>
 
             <label>Test Prompt</label>
-            <textarea id="testPrompt" rows="3" placeholder="Type prompt...">Write a complete, detailed essay explaining APIs.</textarea>
+            <textarea id="testPrompt" rows="3" placeholder="Type prompt...">Explain APIs in simple terms.</textarea>
 
-            <button onclick="runTest()">Run Test</button>
+            <button class="btn-primary" onclick="runTest()">Run Test</button>
 
             <div id="testResult" class="output-box"></div>
         </div>
     </div>
 
-    <!-- TAB 4: LOGS -->
+    <!-- TAB 5: WORKER CODE -->
+    <div id="tab-worker" class="tab-content">
+        <div class="card">
+            <h2>Worker Deployment Notice</h2>
+            <p class="subtitle">Worker code updates are automatically managed via GitHub Actions.</p>
+            <p class="subtitle">To update <code>worker.js</code>, simply edit and commit the file in your GitHub repo. GitHub Actions will deploy it to Cloudflare in under 10 seconds.</p>
+        </div>
+    </div>
+
+    <!-- TAB 6: LOGS -->
     <div id="tab-logs" class="tab-content">
         <div class="card">
-            <h3>Console Activity</h3>
-            <p>Real-time execution logs and HTTP metrics.</p>
+            <h2>Session Activity Logs</h2>
+            <p class="subtitle">Real-time HTTP metrics and execution events.</p>
             <div id="logsConsole" class="logs-console"></div>
         </div>
     </div>
@@ -275,20 +570,13 @@
 
 <script>
     const API_BASE_URL = "https://crystal-api.baddampujithareddy19.workers.dev";
+    let lastKey = "";
 
-    // Auto-load saved Cloudflare credentials
-    document.addEventListener("DOMContentLoaded", () => {
-        if(localStorage.getItem("cf_account_id")) document.getElementById("cfAccountId").value = localStorage.getItem("cf_account_id");
-        if(localStorage.getItem("cf_api_token")) document.getElementById("cfApiToken").value = localStorage.getItem("cf_api_token");
-        if(localStorage.getItem("cf_script_name")) document.getElementById("cfScriptName").value = localStorage.getItem("cf_script_name");
-        addLog("Admin console ready.");
-    });
-
-    function switchTab(tabId) {
+    function switchTab(tabId, evt) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         
-        event.target.classList.add('active');
+        evt.target.classList.add('active');
         document.getElementById(`tab-${tabId}`).classList.add('active');
     }
 
@@ -296,17 +584,16 @@
         const consoleEl = document.getElementById("logsConsole");
         const time = new Date().toLocaleTimeString();
         const cls = type === 'ok' ? 'log-ok' : type === 'err' ? 'log-err' : '';
-        consoleEl.innerHTML = `<div class="log-item"><span class="log-time">[${time}]</span> <span class="${cls}">${msg}</span></div>` + consoleEl.innerHTML;
+        consoleEl.innerHTML = `<div class="log-item">[${time}] <span class="${cls}">${msg}</span></div>` + consoleEl.innerHTML;
     }
 
-    // 1. Key Generator
     async function generateKey() {
         const secret = document.getElementById("adminSecret").value;
         const out = document.getElementById("keyOutput");
         if(!secret) return alert("Enter admin password.");
 
         out.style.display = "block";
-        out.innerText = "Creating key...";
+        out.innerText = "Generating Key...";
 
         try {
             const res = await fetch(`${API_BASE_URL}/v1/create-key`, {
@@ -315,12 +602,13 @@
             });
             const data = await res.json();
             if(data.status === "success") {
-                out.innerHTML = `Created Key:<br><strong>${data.api_key}</strong>`;
+                lastKey = data.api_key;
+                out.innerHTML = `Created Key:<br><strong>${data.api_key}</strong><br><br><span style="color:var(--md-sys-color-primary); font-size:11px;">✅ Pre-allocated with 20,000,000 Tokens</span><br><button class="btn-secondary" onclick="copyKey()">📋 Copy Key</button>`;
                 document.getElementById("testApiKey").value = data.api_key;
-                addLog(`Generated key: ${data.api_key.substring(0, 15)}...`, "ok");
+                addLog(`Generated Key: ${data.api_key.substring(0, 15)}...`, "ok");
             } else {
                 out.innerText = "Error: " + data.error;
-                addLog(`Key generation failed: ${data.error}`, "err");
+                addLog(`Key generation error: ${data.error}`, "err");
             }
         } catch(e) {
             out.innerText = "Network Error!";
@@ -328,53 +616,13 @@
         }
     }
 
-    // 2. Direct Cloudflare Deployer
-    async function deployWorker() {
-        const accountId = document.getElementById("cfAccountId").value.trim();
-        const apiToken = document.getElementById("cfApiToken").value.trim();
-        const scriptName = document.getElementById("cfScriptName").value.trim();
-        const code = document.getElementById("workerCode").value;
-        const out = document.getElementById("deployOutput");
-
-        if(!accountId || !apiToken || !scriptName || !code) {
-            return alert("Fill in Account ID, API Token, Script Name, and Code!");
-        }
-
-        // Save credentials locally
-        localStorage.setItem("cf_account_id", accountId);
-        localStorage.setItem("cf_api_token", apiToken);
-        localStorage.setItem("cf_script_name", scriptName);
-
-        out.style.display = "block";
-        out.innerText = "Deploying code directly to Cloudflare...";
-        addLog(`Deploying script '${scriptName}' to Cloudflare...`);
-
-        try {
-            const cfEndpoint = `https://api.cloudflare.com/client/v4/accounts/${accountId}/workers/scripts/${scriptName}`;
-            const res = await fetch(cfEndpoint, {
-                method: "PUT",
-                headers: {
-                    "Authorization": `Bearer ${apiToken}`,
-                    "Content-Type": "application/javascript"
-                },
-                body: code
-            });
-
-            const data = await res.json();
-            if(data.success) {
-                out.innerText = "✅ Deployed successfully! Worker is live.";
-                addLog("Worker script updated live on Cloudflare!", "ok");
-            } else {
-                out.innerText = "Deploy Failed: " + JSON.stringify(data.errors);
-                addLog("Deployment failed: " + JSON.stringify(data.errors), "err");
-            }
-        } catch(e) {
-            out.innerText = "Deployment failed. Ensure API token has Worker Edit permissions.";
-            addLog("Cloudflare API request failed.", "err");
-        }
+    function copyKey() {
+        if(!lastKey) return;
+        navigator.clipboard.writeText(lastKey);
+        addLog("Copied API key to clipboard.", "ok");
+        alert("Key copied to clipboard!");
     }
 
-    // 3. Tester with Token & Temp Controls
     async function runTest() {
         const apiKey = document.getElementById("testApiKey").value.trim();
         const prompt = document.getElementById("testPrompt").value;
@@ -385,8 +633,8 @@
         if(!apiKey) return alert("Enter an API Key.");
 
         out.style.display = "block";
-        out.innerText = "Generating AI Response...";
-        addLog(`Running prompt (Max Tokens: ${maxTokens}, Temp: ${temperature})...`);
+        out.innerText = "Requesting AI response...";
+        addLog(`Sending prompt (Tokens: ${maxTokens}, Temp: ${temperature})...`);
 
         try {
             const res = await fetch(`${API_BASE_URL}/`, {
@@ -404,17 +652,19 @@
 
             const data = await res.json();
             if(data.status === "success") {
-                out.innerText = `Result:\n\n${data.result}`;
-                addLog("AI Response received without truncating.", "ok");
+                out.innerText = `Response:\n\n${data.result}`;
+                addLog("Received AI response successfully.", "ok");
             } else {
                 out.innerText = "Error: " + data.error;
                 addLog("Test error: " + data.error, "err");
             }
         } catch(e) {
             out.innerText = "Network Error.";
-            addLog("Network error during test.", "err");
+            addLog("Network error running test.", "err");
         }
     }
+
+    addLog("Material 3 Console Initialized.");
 </script>
 
 </body>
