@@ -362,35 +362,39 @@ Body:
 
         if(tabId === 'requests') fetchRequests();
     }
+async function fetchRequests() {
+    const container = document.getElementById("requestsContainer");
+    container.innerHTML = `<p style="font-size:13px;">Loading live request logs...</p>`;
 
-    async function fetchRequests() {
-        const container = document.getElementById("requestsContainer");
-        container.innerHTML = `<p style="font-size:13px;">Loading requests...</p>`;
-
-        try {
-            const res = await fetch(`${API_BASE_URL}/v1/requests`);
-            const data = await res.json();
-            
-            if(data.requests && data.requests.length > 0) {
-                container.innerHTML = data.requests.map(req => `
-                    <div class="req-card">
-                        <div class="req-header">
-                            <span class="req-model">${req.model}</span>
-                            <span class="req-badge">${req.latency}</span>
-                        </div>
-                        <div class="req-meta">
-                            <span>🕒 ${req.timestamp}</span>
-                            <span>📍 ${req.country} (${req.ip})</span>
-                        </div>
+    try {
+        const res = await fetch(`${API_BASE_URL}/v1/requests`);
+        const data = await res.json();
+        
+        if(data.requests && data.requests.length > 0) {
+            container.innerHTML = data.requests.map(req => `
+                <div class="req-card">
+                    <div class="req-header">
+                        <span class="req-model">${req.model}</span>
+                        <span class="req-badge">${req.latency}</span>
                     </div>
-                `).join('');
-            } else {
-                container.innerHTML = `<p style="font-size:13px; color:var(--md-sys-color-on-surface-variant);">No requests logged yet. Execute a prompt in the Tester tab!</p>`;
-            }
-        } catch(e) {
-            container.innerHTML = `<p style="font-size:13px; color:var(--md-sys-color-danger);">Failed to load request log.</p>`;
+                    <div style="font-size:12px; margin: 8px 0; padding: 8px; background: var(--md-sys-color-surface-variant); border-radius: 8px;">
+                        <strong>Prompt:</strong> ${req.prompt || 'N/A'}<br>
+                        <strong>Response:</strong> ${req.response || 'N/A'}
+                    </div>
+                    <div class="req-meta">
+                        <span>🕒 ${req.timestamp}</span>
+                        <span>📍 ${req.country} (${req.colo})</span>
+                        <span>🆔 ${req.cfRay}</span>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = `<p style="font-size:13px; color:var(--md-sys-color-on-surface-variant);">No requests logged yet. Execute a prompt in the Tester tab!</p>`;
         }
+    } catch(e) {
+        container.innerHTML = `<p style="font-size:13px; color:var(--md-sys-color-danger);">Failed to load request log.</p>`;
     }
+}
 
     async function runTest() {
         const apiKey = document.getElementById("testApiKey").value.trim();
