@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>Crystal Provider | Developer Console</title>
-    <!-- Material Symbols & Google Fonts -->
+    <title>Crystal Provider | Developer Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     
     <style>
-        /* Material 3 Full White Palette */
         :root {
             --md-sys-color-background: #ffffff;
             --md-sys-color-surface: #ffffff;
@@ -27,13 +25,12 @@
             --md-sys-color-on-surface-variant: #444746;
             --md-sys-color-success: #146c2e;
             --md-sys-color-success-container: #c4ebd0;
-            --md-sys-color-danger: #b3261e;
         }
 
         * { box-sizing: border-box; }
 
         body {
-            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Roboto', sans-serif;
             background-color: var(--md-sys-color-surface-container);
             color: var(--md-sys-color-on-surface);
             margin: 0;
@@ -45,13 +42,12 @@
 
         .app-container {
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
-        /* Material 3 Top Header */
         .brand-header {
             text-align: center;
             padding: 8px 0;
@@ -62,7 +58,6 @@
             font-size: 24px;
             font-weight: 700;
             color: var(--md-sys-color-primary);
-            letter-spacing: -0.5px;
         }
 
         .brand-header p {
@@ -71,12 +66,10 @@
             color: var(--md-sys-color-on-surface-variant);
         }
 
-        /* Material 3 Scrollable Pill Tabs */
         .nav-wrapper {
             overflow-x: auto;
             white-space: nowrap;
             scrollbar-width: none;
-            -ms-overflow-style: none;
             padding-bottom: 4px;
         }
         .nav-wrapper::-webkit-scrollbar { display: none; }
@@ -98,7 +91,7 @@
             font-weight: 500;
             border-radius: 20px;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+            transition: all 0.2s;
         }
 
         .tab-btn.active {
@@ -107,7 +100,6 @@
             font-weight: 700;
         }
 
-        /* Material 3 Cards */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
@@ -119,24 +111,11 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
         }
 
-        h2 {
-            margin: 0 0 6px 0;
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--md-sys-color-on-surface);
-        }
+        h2 { margin: 0 0 6px 0; font-size: 18px; font-weight: 700; }
+        p.subtitle { margin: 0 0 16px 0; font-size: 13px; color: var(--md-sys-color-on-surface-variant); }
 
-        p.subtitle {
-            margin: 0 0 16px 0;
-            font-size: 13px;
-            color: var(--md-sys-color-on-surface-variant);
-            line-height: 1.4;
-        }
-
-        /* Material 3 Badge */
         .badge-quota {
             display: inline-flex;
-            align-items: center;
             background: var(--md-sys-color-primary-container);
             color: var(--md-sys-color-on-primary-container);
             padding: 6px 12px;
@@ -146,14 +125,7 @@
             margin-bottom: 16px;
         }
 
-        /* Form Inputs */
-        label {
-            display: block;
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--md-sys-color-on-surface-variant);
-            margin-bottom: 6px;
-        }
+        label { display: block; font-size: 12px; font-weight: 500; color: var(--md-sys-color-on-surface-variant); margin-bottom: 6px; }
 
         input, textarea, select {
             width: 100%;
@@ -166,22 +138,10 @@
             outline: none;
             margin-bottom: 16px;
             font-family: inherit;
-            transition: border-color 0.2s;
         }
 
-        input:focus, textarea:focus {
-            border-color: var(--md-sys-color-primary);
-            border-width: 2px;
-            padding: 11px 15px;
-        }
+        .row-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        .row-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        /* Buttons */
         button.btn-primary {
             width: 100%;
             padding: 12px 24px;
@@ -192,12 +152,6 @@
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-        }
-
-        button.btn-primary:active {
-            background: var(--md-sys-color-primary-hover);
-            transform: scale(0.98);
         }
 
         button.btn-secondary {
@@ -209,10 +163,8 @@
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
-            margin-top: 8px;
         }
 
-        /* Code Blocks & Tables */
         .code-block {
             font-family: 'Roboto Mono', monospace;
             font-size: 12px;
@@ -221,9 +173,8 @@
             padding: 14px;
             border-radius: 16px;
             overflow-x: auto;
-            line-height: 1.5;
-            white-space: pre;
             margin-bottom: 16px;
+            white-space: pre;
         }
 
         .output-box {
@@ -233,13 +184,11 @@
             border-radius: 12px;
             font-family: 'Roboto Mono', monospace;
             font-size: 13px;
-            color: var(--md-sys-color-on-surface);
             word-break: break-all;
             display: none;
         }
 
-        /* Model Cards List */
-        .model-card {
+        .req-card {
             border: 1px solid var(--md-sys-color-outline-variant);
             border-radius: 16px;
             padding: 14px;
@@ -247,283 +196,88 @@
             background: var(--md-sys-color-surface);
         }
 
-        .model-header {
+        .req-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 6px;
         }
 
-        .model-name {
-            font-weight: 700;
-            font-size: 13px;
-            color: var(--md-sys-color-primary);
+        .req-model {
             font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--md-sys-color-primary);
         }
 
-        .model-tokens {
-            background: var(--md-sys-color-primary-container);
-            color: var(--md-sys-color-on-primary-container);
+        .req-badge {
+            background: var(--md-sys-color-success-container);
+            color: var(--md-sys-color-success);
             font-size: 11px;
             font-weight: 700;
             padding: 2px 8px;
             border-radius: 8px;
         }
 
-        .model-desc {
+        .req-meta {
             font-size: 12px;
             color: var(--md-sys-color-on-surface-variant);
-            margin: 0;
+            display: flex;
+            gap: 12px;
+            margin-top: 6px;
         }
-
-        /* Console */
-        .logs-console {
-            background: #111318;
-            padding: 14px;
-            border-radius: 16px;
-            font-family: 'Roboto Mono', monospace;
-            font-size: 12px;
-            height: 220px;
-            overflow-y: auto;
-            color: #c4c6d0;
-        }
-        .log-item { margin-bottom: 6px; }
-        .log-ok { color: #6ddb8c; }
-        .log-err { color: #ffb4ab; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
 
-    <!-- Header -->
     <div class="brand-header">
         <h1>Crystal Provider</h1>
-        <p>High-Performance Free AI Provider API</p>
+        <p>Real-Time Developer Console & Model Inspector</p>
     </div>
 
-    <!-- Navigation Bar -->
     <div class="nav-wrapper">
         <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('keys', event)">🔑 Keys</button>
+            <button class="tab-btn active" onclick="switchTab('requests', event)">📊 Requests</button>
+            <button class="tab-btn" onclick="switchTab('tester', event)">⚡ Tester</button>
+            <button class="tab-btn" onclick="switchTab('keys', event)">🔑 Keys</button>
             <button class="tab-btn" onclick="switchTab('models', event)">🤖 Models</button>
             <button class="tab-btn" onclick="switchTab('instructions', event)">📖 Instructions</button>
-            <button class="tab-btn" onclick="switchTab('tester', event)">⚡ Tester</button>
-            <button class="tab-btn" onclick="switchTab('worker', event)">📝 Worker</button>
-            <button class="tab-btn" onclick="switchTab('logs', event)">📜 Logs</button>
         </div>
     </div>
 
-    <!-- TAB 1: KEYS -->
-    <div id="tab-keys" class="tab-content active">
+    <!-- TAB 1: REQUESTS MENU -->
+    <div id="tab-requests" class="tab-content active">
         <div class="card">
-            <h2>API Key Generator</h2>
-            <p class="subtitle">Generate secure keys for your apps. Each key comes pre-loaded with free tokens.</p>
-            
-            <div class="badge-quota">🎁 Quota: 20,000,000 Free Tokens / Key</div>
-            
-            <label>Admin Password</label>
-            <input type="password" id="adminSecret" placeholder="crystal_admin_2026">
-            
-            <button class="btn-primary" onclick="generateKey()">Generate API Key</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h2>Live Request Log</h2>
+                <button class="btn-secondary" onclick="fetchRequests()">🔄 Refresh</button>
+            </div>
+            <p class="subtitle">Inspect incoming API calls, model routing, IP locations, and execution latency in real-time.</p>
 
-            <div id="keyOutput" class="output-box"></div>
-        </div>
-    </div>
-
-    <!-- TAB 2: AVAILABLE MODELS (15 Models) -->
-    <div id="tab-models" class="tab-content">
-        <div class="card">
-            <h2>Available Models (15)</h2>
-            <p class="subtitle">Active Cloudflare Workers AI models ready for your requests.</p>
-
-            <div id="modelsList">
-                <!-- 1 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/meta/llama-3.3-70b-instruct-fp8-fast</span>
-                        <span class="model-tokens">24,000 Tokens</span>
-                    </div>
-                    <p class="model-desc">Meta's flagship 70B model. High reasoning, coding, and instruction following.</p>
-                </div>
-                <!-- 2 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/meta/llama-3.1-8b-instruct-fp8-fast</span>
-                        <span class="model-tokens">8,192 Tokens</span>
-                    </div>
-                    <p class="model-desc">Fast, standard default model for general chat and quick tasks.</p>
-                </div>
-                <!-- 3 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/meta/llama-3.2-3b-instruct</span>
-                        <span class="model-tokens">131,072 Tokens</span>
-                    </div>
-                    <p class="model-desc">Ultra-fast lightweight model with a massive 131k context window.</p>
-                </div>
-                <!-- 4 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/deepseek-ai/deepseek-r1-distill-qwen-32b</span>
-                        <span class="model-tokens">32,768 Tokens</span>
-                    </div>
-                    <p class="model-desc">DeepSeek R1 reasoning model distilled into Qwen 32B. Math & complex logic.</p>
-                </div>
-                <!-- 5 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/qwen/qwq-32b</span>
-                        <span class="model-tokens">32,768 Tokens</span>
-                    </div>
-                    <p class="model-desc">Qwen reasoning model competitive with frontier analytical models.</p>
-                </div>
-                <!-- 6 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/qwen/qwen2.5-coder-32b-instruct</span>
-                        <span class="model-tokens">32,768 Tokens</span>
-                    </div>
-                    <p class="model-desc">Specialized for code generation, bug fixing, and software architecture.</p>
-                </div>
-                <!-- 7 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/qwen/qwen1.5-14b-chat-awq</span>
-                        <span class="model-tokens">32,768 Tokens</span>
-                    </div>
-                    <p class="model-desc">Heavyweight logic, long-memory context, and multilingual chat.</p>
-                </div>
-                <!-- 8 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/google/gemma-7b-it</span>
-                        <span class="model-tokens">8,192 Tokens</span>
-                    </div>
-                    <p class="model-desc">Google's open 7B instruction-tuned model. Highly accurate.</p>
-                </div>
-                <!-- 9 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/google/gemma-2b-it</span>
-                        <span class="model-tokens">8,192 Tokens</span>
-                    </div>
-                    <p class="model-desc">Lightweight 2B Google model built for near-instant responses.</p>
-                </div>
-                <!-- 10 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/mistral/mistral-7b-instruct-v0.1</span>
-                        <span class="model-tokens">8,192 Tokens</span>
-                    </div>
-                    <p class="model-desc">High-speed conversational model with strong instruction adherence.</p>
-                </div>
-                <!-- 11 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/mistralai/mistral-small-3.1-24b-instruct</span>
-                        <span class="model-tokens">128,000 Tokens</span>
-                    </div>
-                    <p class="model-desc">Mistral 24B with 128k context for long document processing.</p>
-                </div>
-                <!-- 12 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/microsoft/phi-2</span>
-                        <span class="model-tokens">2,048 Tokens</span>
-                    </div>
-                    <p class="model-desc">Microsoft's compact 2.7B reasoning powerhouse for quick tasks.</p>
-                </div>
-                <!-- 13 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/tinyllama/tinyllama-1.1b-chat-v1.0</span>
-                        <span class="model-tokens">2,048 Tokens</span>
-                    </div>
-                    <p class="model-desc">Ultra-fast micro model ideal for lightweight mobile chatbots.</p>
-                </div>
-                <!-- 14 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/openchat/openchat-3.5-0106</span>
-                        <span class="model-tokens">8,192 Tokens</span>
-                    </div>
-                    <p class="model-desc">Fine-tuned open-source model optimized for natural conversation flow.</p>
-                </div>
-                <!-- 15 -->
-                <div class="model-card">
-                    <div class="model-header">
-                        <span class="model-name">@cf/defog/sqlcoder-7b-2</span>
-                        <span class="model-tokens">4,096 Tokens</span>
-                    </div>
-                    <p class="model-desc">Dedicated model for writing, optimizing, and explaining SQL queries.</p>
-                </div>
+            <div id="requestsContainer">
+                <p style="font-size:13px; color:var(--md-sys-color-on-surface-variant);">Click Refresh to pull latest request data.</p>
             </div>
         </div>
     </div>
 
-    <!-- TAB 3: INSTRUCTIONS -->
-    <div id="tab-instructions" class="tab-content">
-        <div class="card">
-            <h2>How to Use Crystal Provider</h2>
-            <p class="subtitle">Integrate your generated keys into any web browser, Discord bot, or mobile app.</p>
-
-            <div class="badge-quota">⚡ Each key gets 20,000,000 Tokens</div>
-
-            <h3>1. Authentication</h3>
-            <p class="subtitle">Pass your API key in the <code>X-Crystal-Key</code> header of your POST requests.</p>
-
-            <h3>2. API Endpoint</h3>
-            <div class="code-block">POST https://crystal-api.baddampujithareddy19.workers.dev/</div>
-
-            <h3>3. Code Examples</h3>
-
-            <label>JavaScript / Fetch (Web & Node)</label>
-            <div class="code-block">fetch("https://crystal-api.baddampujithareddy19.workers.dev/", {
-  method: "POST",
-  headers: {
-    "X-Crystal-Key": "YOUR_CRYSTAL_KEY",
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    prompt: "Write a quick sorting algorithm in JS",
-    model: "@cf/meta/llama-3.1-8b-instruct-fp8-fast",
-    max_tokens: 2048,
-    temperature: 0.7
-  })
-})
-.then(res => res.json())
-.then(data => console.log(data.result));</div>
-
-            <label>Python (requests)</label>
-            <div class="code-block">import requests
-
-url = "https://crystal-api.baddampujithareddy19.workers.dev/"
-headers = {
-    "X-Crystal-Key": "YOUR_CRYSTAL_KEY",
-    "Content-Type": "application/json"
-}
-payload = {
-    "prompt": "Hello world!",
-    "max_tokens": 2048
-}
-
-response = requests.post(url, headers=headers, json=payload)
-print(response.json()["result"])</div>
-
-            <label>cURL</label>
-            <div class="code-block">curl -X POST https://crystal-api.baddampujithareddy19.workers.dev/ \
-  -H "X-Crystal-Key: YOUR_CRYSTAL_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"prompt": "Hi", "max_tokens": 1024}'</div>
-        </div>
-    </div>
-
-    <!-- TAB 4: TESTER -->
+    <!-- TAB 2: TESTER -->
     <div id="tab-tester" class="tab-content">
         <div class="card">
-            <h2>Live API Tester</h2>
-            <p class="subtitle">Test your prompts against Cloudflare Workers AI.</p>
+            <h2>Live Model Tester</h2>
+            <p class="subtitle">Select any model to execute live GPU inference.</p>
+
+            <label>Select Model to Use</label>
+            <select id="testModel">
+                <option value="@cf/meta/llama-3.3-70b-instruct-fp8-fast">Meta Llama 3.3 70B Instruct</option>
+                <option value="@cf/meta/llama-3.1-8b-instruct-fp8-fast" selected>Meta Llama 3.1 8B Instruct</option>
+                <option value="@cf/deepseek-ai/deepseek-r1-distill-qwen-32b">DeepSeek R1 Distill Qwen 32B</option>
+                <option value="@cf/qwen/qwen2.5-coder-32b-instruct">Qwen 2.5 Coder 32B</option>
+                <option value="@cf/defog/sqlcoder-7b-2">SQLCoder 7B (SQL Generator)</option>
+                <option value="@cf/google/gemma-7b-it">Google Gemma 7B</option>
+                <option value="@cf/mistral/mistral-7b-instruct-v0.1">Mistral 7B Instruct</option>
+            </select>
 
             <label>API Key</label>
             <input type="text" id="testApiKey" placeholder="cry_live_...">
@@ -539,30 +293,58 @@ print(response.json()["result"])</div>
                 </div>
             </div>
 
-            <label>Test Prompt</label>
-            <textarea id="testPrompt" rows="3" placeholder="Type prompt...">Explain APIs in simple terms.</textarea>
+            <label>Prompt</label>
+            <textarea id="testPrompt" rows="3">Explain quantum computing in 2 simple sentences.</textarea>
 
-            <button class="btn-primary" onclick="runTest()">Run Test</button>
+            <button class="btn-primary" onclick="runTest()">Run Model Test</button>
 
             <div id="testResult" class="output-box"></div>
         </div>
     </div>
 
-    <!-- TAB 5: WORKER CODE -->
-    <div id="tab-worker" class="tab-content">
+    <!-- TAB 3: KEYS -->
+    <div id="tab-keys" class="tab-content">
         <div class="card">
-            <h2>Worker Deployment Notice</h2>
-            <p class="subtitle">Worker code updates are automatically managed via GitHub Actions.</p>
-            <p class="subtitle">To update <code>worker.js</code>, simply edit and commit the file in your GitHub repo. GitHub Actions will deploy it to Cloudflare in under 10 seconds.</p>
+            <h2>API Key Generator</h2>
+            <p class="subtitle">Generate keys pre-loaded with free tokens.</p>
+            <div class="badge-quota">🎁 Quota: 20,000,000 Tokens / Key</div>
+            
+            <label>Admin Secret</label>
+            <input type="password" id="adminSecret" placeholder="crystal_admin_2026">
+            <button class="btn-primary" onclick="generateKey()">Generate API Key</button>
+            <div id="keyOutput" class="output-box"></div>
         </div>
     </div>
 
-    <!-- TAB 6: LOGS -->
-    <div id="tab-logs" class="tab-content">
+    <!-- TAB 4: MODELS -->
+    <div id="tab-models" class="tab-content">
         <div class="card">
-            <h2>Session Activity Logs</h2>
-            <p class="subtitle">Real-time HTTP metrics and execution events.</p>
-            <div id="logsConsole" class="logs-console"></div>
+            <h2>Available Models (15)</h2>
+            <p class="subtitle">Cloudflare Workers AI Model Catalog.</p>
+            <div style="font-size:12px; color:var(--md-sys-color-on-surface-variant); line-height:1.6;">
+                • <strong>@cf/meta/llama-3.3-70b-instruct-fp8-fast</strong> (70B Meta Flagship)<br>
+                • <strong>@cf/deepseek-ai/deepseek-r1-distill-qwen-32b</strong> (DeepSeek Reasoning)<br>
+                • <strong>@cf/qwen/qwen2.5-coder-32b-instruct</strong> (Coding Specialist)<br>
+                • <strong>@cf/google/gemma-7b-it</strong> (Google AI)<br>
+                • <strong>@cf/defog/sqlcoder-7b-2</strong> (Database Queries)
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 5: INSTRUCTIONS -->
+    <div id="tab-instructions" class="tab-content">
+        <div class="card">
+            <h2>Integration Guide</h2>
+            <div class="code-block">POST https://crystal-api.baddampujithareddy19.workers.dev/
+Headers:
+  X-Crystal-Key: YOUR_KEY
+  Content-Type: application/json
+
+Body:
+  {
+    "model": "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b",
+    "prompt": "Hello world"
+  }</div>
         </div>
     </div>
 
@@ -570,7 +352,6 @@ print(response.json()["result"])</div>
 
 <script>
     const API_BASE_URL = "https://crystal-api.baddampujithareddy19.workers.dev";
-    let lastKey = "";
 
     function switchTab(tabId, evt) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -578,54 +359,43 @@ print(response.json()["result"])</div>
         
         evt.target.classList.add('active');
         document.getElementById(`tab-${tabId}`).classList.add('active');
+
+        if(tabId === 'requests') fetchRequests();
     }
 
-    function addLog(msg, type = 'info') {
-        const consoleEl = document.getElementById("logsConsole");
-        const time = new Date().toLocaleTimeString();
-        const cls = type === 'ok' ? 'log-ok' : type === 'err' ? 'log-err' : '';
-        consoleEl.innerHTML = `<div class="log-item">[${time}] <span class="${cls}">${msg}</span></div>` + consoleEl.innerHTML;
-    }
-
-    async function generateKey() {
-        const secret = document.getElementById("adminSecret").value;
-        const out = document.getElementById("keyOutput");
-        if(!secret) return alert("Enter admin password.");
-
-        out.style.display = "block";
-        out.innerText = "Generating Key...";
+    async function fetchRequests() {
+        const container = document.getElementById("requestsContainer");
+        container.innerHTML = `<p style="font-size:13px;">Loading requests...</p>`;
 
         try {
-            const res = await fetch(`${API_BASE_URL}/v1/create-key`, {
-                method: "POST",
-                headers: { "X-Admin-Secret": secret }
-            });
+            const res = await fetch(`${API_BASE_URL}/v1/requests`);
             const data = await res.json();
-            if(data.status === "success") {
-                lastKey = data.api_key;
-                out.innerHTML = `Created Key:<br><strong>${data.api_key}</strong><br><br><span style="color:var(--md-sys-color-primary); font-size:11px;">✅ Pre-allocated with 20,000,000 Tokens</span><br><button class="btn-secondary" onclick="copyKey()">📋 Copy Key</button>`;
-                document.getElementById("testApiKey").value = data.api_key;
-                addLog(`Generated Key: ${data.api_key.substring(0, 15)}...`, "ok");
+            
+            if(data.requests && data.requests.length > 0) {
+                container.innerHTML = data.requests.map(req => `
+                    <div class="req-card">
+                        <div class="req-header">
+                            <span class="req-model">${req.model}</span>
+                            <span class="req-badge">${req.latency}</span>
+                        </div>
+                        <div class="req-meta">
+                            <span>🕒 ${req.timestamp}</span>
+                            <span>📍 ${req.country} (${req.ip})</span>
+                        </div>
+                    </div>
+                `).join('');
             } else {
-                out.innerText = "Error: " + data.error;
-                addLog(`Key generation error: ${data.error}`, "err");
+                container.innerHTML = `<p style="font-size:13px; color:var(--md-sys-color-on-surface-variant);">No requests logged yet. Execute a prompt in the Tester tab!</p>`;
             }
         } catch(e) {
-            out.innerText = "Network Error!";
-            addLog("Network error generating key.", "err");
+            container.innerHTML = `<p style="font-size:13px; color:var(--md-sys-color-danger);">Failed to load request log.</p>`;
         }
-    }
-
-    function copyKey() {
-        if(!lastKey) return;
-        navigator.clipboard.writeText(lastKey);
-        addLog("Copied API key to clipboard.", "ok");
-        alert("Key copied to clipboard!");
     }
 
     async function runTest() {
         const apiKey = document.getElementById("testApiKey").value.trim();
         const prompt = document.getElementById("testPrompt").value;
+        const model = document.getElementById("testModel").value;
         const maxTokens = parseInt(document.getElementById("maxTokens").value);
         const temperature = parseFloat(document.getElementById("temperature").value);
         const out = document.getElementById("testResult");
@@ -633,8 +403,7 @@ print(response.json()["result"])</div>
         if(!apiKey) return alert("Enter an API Key.");
 
         out.style.display = "block";
-        out.innerText = "Requesting AI response...";
-        addLog(`Sending prompt (Tokens: ${maxTokens}, Temp: ${temperature})...`);
+        out.innerText = `Sending request to model:\n${model}\n\nPlease wait...`;
 
         try {
             const res = await fetch(`${API_BASE_URL}/`, {
@@ -644,6 +413,7 @@ print(response.json()["result"])</div>
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
+                    model: model,
                     prompt: prompt,
                     max_tokens: maxTokens,
                     temperature: temperature
@@ -652,19 +422,42 @@ print(response.json()["result"])</div>
 
             const data = await res.json();
             if(data.status === "success") {
-                out.innerText = `Response:\n\n${data.result}`;
-                addLog("Received AI response successfully.", "ok");
+                out.innerText = `[Model Used]: ${data.model_used}\n[Latency]: ${data.execution_time}\n\n[Response]:\n${data.result}`;
+                setTimeout(fetchRequests, 1000);
             } else {
                 out.innerText = "Error: " + data.error;
-                addLog("Test error: " + data.error, "err");
             }
         } catch(e) {
             out.innerText = "Network Error.";
-            addLog("Network error running test.", "err");
         }
     }
 
-    addLog("Material 3 Console Initialized.");
+    async function generateKey() {
+        const secret = document.getElementById("adminSecret").value;
+        const out = document.getElementById("keyOutput");
+        if(!secret) return alert("Enter admin secret.");
+
+        out.style.display = "block";
+        out.innerText = "Generating...";
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/v1/create-key`, {
+                method: "POST",
+                headers: { "X-Admin-Secret": secret }
+            });
+            const data = await res.json();
+            if(data.status === "success") {
+                out.innerHTML = `Created Key:<br><strong>${data.api_key}</strong>`;
+                document.getElementById("testApiKey").value = data.api_key;
+            } else {
+                out.innerText = "Error: " + data.error;
+            }
+        } catch(e) {
+            out.innerText = "Network Error.";
+        }
+    }
+
+    fetchRequests();
 </script>
 
 </body>
