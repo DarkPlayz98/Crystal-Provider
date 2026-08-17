@@ -1,783 +1,558 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Crystal Provider — Console</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#0a0a0b;
-    --panel:#111113;
-    --line:#232326;
-    --line-soft:#1a1a1d;
-    --text:#e8e8e6;
-    --text-dim:#8a8a8f;
-    --text-faint:#5a5a5f;
-    --accent:#5eead4;
-    --accent-dim:#2d3d3a;
-    --error:#f87171;
-    --error-dim:#3a2626;
-    font-size:15px;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:'IBM Plex Mono',ui-monospace,monospace;
-    -webkit-font-smoothing:antialiased;
-    min-height:100vh;
-  }
-  ::selection{background:var(--accent-dim);color:var(--accent);}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Crystal Provider | Developer Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --md-sys-color-background: #ffffff;
+            --md-sys-color-surface: #ffffff;
+            --md-sys-color-surface-variant: #f0f4f9;
+            --md-sys-color-surface-container: #f8f9ff;
+            --md-sys-color-primary: #0b57d0;
+            --md-sys-color-primary-hover: #0842a0;
+            --md-sys-color-on-primary: #ffffff;
+            --md-sys-color-primary-container: #d3e3fd;
+            --md-sys-color-on-primary-container: #041e49;
+            --md-sys-color-outline: #c7c6d0;
+            --md-sys-color-outline-variant: #e1e2ec;
+            --md-sys-color-on-surface: #1f1f1f;
+            --md-sys-color-on-surface-variant: #444746;
+            --md-sys-color-success: #146c2e;
+            --md-sys-color-success-container: #c4ebd0;
+            --md-sys-color-danger: #b3261e;
+        }
 
-  a{color:inherit;}
+        * { box-sizing: border-box; }
 
-  .frame{
-    max-width:720px;
-    margin:0 auto;
-    padding:0 16px 48px;
-  }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--md-sys-color-surface-container);
+            color: var(--md-sys-color-on-surface);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
 
-  /* ---------- header / status line ---------- */
-  .head{
-    padding:20px 0 16px;
-    border-bottom:1px solid var(--line);
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-end;
-    gap:12px;
-  }
-  .head-id{
-    display:flex;
-    flex-direction:column;
-    gap:2px;
-  }
-  .head-id .name{
-    font-size:16px;
-    font-weight:600;
-    letter-spacing:-0.01em;
-  }
-  .head-id .sub{
-    font-size:12px;
-    color:var(--text-faint);
-  }
-  .status-line{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    font-size:12px;
-    color:var(--text-dim);
-    white-space:nowrap;
-  }
-  .dot{
-    width:6px;height:6px;border-radius:50%;
-    background:var(--text-faint);
-    flex-shrink:0;
-  }
-  .dot.ok{background:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
-  .dot.bad{background:var(--error);box-shadow:0 0 0 3px var(--error-dim);}
-  .dot.pending{background:var(--text-faint);animation:pulse 1.2s ease-in-out infinite;}
-  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+        .app-container {
+            width: 100%;
+            max-width: 650px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
 
-  /* ---------- nav ---------- */
-  .nav{
-    display:flex;
-    gap:2px;
-    border-bottom:1px solid var(--line);
-    overflow-x:auto;
-    scrollbar-width:none;
-  }
-  .nav::-webkit-scrollbar{display:none;}
-  .nav button{
-    appearance:none;
-    background:none;
-    border:none;
-    color:var(--text-faint);
-    font-family:inherit;
-    font-size:13px;
-    padding:12px 14px 11px;
-    cursor:pointer;
-    border-bottom:2px solid transparent;
-    white-space:nowrap;
-    transition:color .12s;
-  }
-  .nav button:hover{color:var(--text-dim);}
-  .nav button.active{
-    color:var(--text);
-    border-bottom-color:var(--accent);
-  }
+        .brand-header {
+            text-align: center;
+            padding: 8px 0;
+        }
 
-  .panel{display:none;padding-top:20px;}
-  .panel.active{display:block;}
+        .brand-header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--md-sys-color-primary);
+        }
 
-  .section-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    margin-bottom:4px;
-  }
-  h2{
-    margin:0;
-    font-size:14px;
-    font-weight:600;
-    letter-spacing:.02em;
-    text-transform:uppercase;
-  }
-  .desc{
-    font-size:13px;
-    color:var(--text-dim);
-    margin:4px 0 18px;
-    line-height:1.5;
-  }
+        .brand-header p {
+            margin: 4px 0 0 0;
+            font-size: 13px;
+            color: var(--md-sys-color-on-surface-variant);
+        }
 
-  .link-btn{
-    background:none;
-    border:none;
-    color:var(--text-dim);
-    font-family:inherit;
-    font-size:12px;
-    cursor:pointer;
-    padding:2px 0;
-    text-decoration:underline;
-    text-underline-offset:2px;
-    text-decoration-color:var(--line);
-  }
-  .link-btn:hover{color:var(--accent);text-decoration-color:var(--accent);}
+        .nav-wrapper {
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
+            padding-bottom: 4px;
+        }
+        .nav-wrapper::-webkit-scrollbar { display: none; }
 
-  /* ---------- form elements ---------- */
-  label{
-    display:block;
-    font-size:11px;
-    color:var(--text-faint);
-    text-transform:uppercase;
-    letter-spacing:.04em;
-    margin-bottom:6px;
-  }
-  .field{margin-bottom:16px;}
+        .nav-tabs {
+            display: inline-flex;
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 28px;
+            padding: 4px;
+            gap: 4px;
+        }
 
-  input,textarea,select{
-    width:100%;
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:4px;
-    color:var(--text);
-    font-family:inherit;
-    font-size:13px;
-    padding:10px 12px;
-    outline:none;
-    transition:border-color .12s;
-  }
-  input:focus,textarea:focus,select:focus{
-    border-color:var(--accent);
-  }
-  input::placeholder,textarea::placeholder{color:var(--text-faint);}
-  textarea{resize:vertical;line-height:1.5;}
-  select{cursor:pointer;}
+        .tab-btn {
+            padding: 10px 18px;
+            border: none;
+            background: transparent;
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
 
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+        .tab-btn.active {
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            font-weight: 700;
+        }
 
-  button.run{
-    width:100%;
-    background:var(--text);
-    color:var(--bg);
-    border:none;
-    border-radius:4px;
-    padding:11px 16px;
-    font-family:inherit;
-    font-size:13px;
-    font-weight:600;
-    cursor:pointer;
-    transition:opacity .12s;
-  }
-  button.run:hover{opacity:.85;}
-  button.run:active{opacity:.7;}
-  button.run:disabled{opacity:.4;cursor:default;}
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-  button.run.danger{background:var(--error);color:#1a0a0a;}
+        .card {
+            background: var(--md-sys-color-surface);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
 
-  /* ---------- output blocks ---------- */
-  .out{
-    display:none;
-    margin-top:14px;
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-left:2px solid var(--text-faint);
-    border-radius:4px;
-    padding:12px 14px;
-    font-size:12.5px;
-    line-height:1.6;
-    white-space:pre-wrap;
-    word-break:break-word;
-  }
-  .out.ok{border-left-color:var(--accent);}
-  .out.bad{border-left-color:var(--error);color:#e0a0a0;}
-  .out .k{color:var(--text-faint);}
-  .out .v{color:var(--text);}
-  .out strong{color:var(--accent);font-weight:600;}
+        h2 { margin: 0 0 6px 0; font-size: 18px; font-weight: 700; }
+        h3 { margin: 16px 0 8px 0; font-size: 15px; font-weight: 700; color: var(--md-sys-color-primary); }
+        p.subtitle { margin: 0 0 16px 0; font-size: 13px; color: var(--md-sys-color-on-surface-variant); }
 
-  /* ---------- log rows ---------- */
-  .empty{
-    font-size:13px;
-    color:var(--text-faint);
-    padding:24px 0;
-    text-align:center;
-    border:1px dashed var(--line);
-    border-radius:4px;
-  }
-  .row{
-    border:1px solid var(--line);
-    border-radius:4px;
-    padding:12px 14px;
-    margin-bottom:8px;
-  }
-  .row-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:8px;
-    margin-bottom:8px;
-  }
-  .row-model{
-    font-size:12px;
-    font-weight:600;
-    color:var(--accent);
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
-  .row-latency{
-    font-size:11px;
-    color:var(--text-dim);
-    background:var(--line-soft);
-    padding:2px 7px;
-    border-radius:3px;
-    flex-shrink:0;
-  }
-  .row-body{
-    font-size:12px;
-    color:var(--text-dim);
-    line-height:1.55;
-    margin-bottom:8px;
-  }
-  .row-body .lbl{color:var(--text-faint);}
-  .row-meta{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    font-size:11px;
-    color:var(--text-faint);
-  }
+        .badge-quota {
+            display: inline-flex;
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
 
-  /* ---------- key list / badges ---------- */
-  .quota-badge{
-    display:inline-block;
-    font-size:11px;
-    color:var(--accent);
-    border:1px solid var(--accent-dim);
-    background:var(--accent-dim);
-    padding:4px 9px;
-    border-radius:4px;
-    margin-bottom:18px;
-  }
+        label { display: block; font-size: 12px; font-weight: 500; color: var(--md-sys-color-on-surface-variant); margin-bottom: 6px; }
 
-  .model-table{border:1px solid var(--line);border-radius:4px;overflow:hidden;}
-  .model-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    padding:11px 14px;
-    border-bottom:1px solid var(--line);
-    font-size:12.5px;
-  }
-  .model-row:last-child{border-bottom:none;}
-  .model-row .mname{color:var(--text);word-break:break-all;}
-  .model-row .mflag{
-    flex-shrink:0;
-    font-size:10px;
-    padding:2px 6px;
-    border-radius:3px;
-    letter-spacing:.03em;
-  }
-  .mflag.allowed{color:var(--accent);background:var(--accent-dim);}
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--md-sys-color-surface);
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 12px;
+            color: var(--md-sys-color-on-surface);
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 16px;
+            font-family: inherit;
+        }
 
-  pre.code{
-    font-family:inherit;
-    font-size:12px;
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:4px;
-    padding:14px;
-    overflow-x:auto;
-    line-height:1.6;
-    color:var(--text-dim);
-    margin:0 0 16px;
-  }
-  pre.code .k{color:var(--accent);}
+        .row-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-  .note{
-    font-size:12px;
-    color:var(--text-faint);
-    line-height:1.6;
-    margin-top:16px;
-    padding-top:14px;
-    border-top:1px solid var(--line-soft);
-  }
+        button.btn-primary {
+            width: 100%;
+            padding: 12px 24px;
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
 
-  @media (prefers-reduced-motion: reduce){
-    .dot.pending{animation:none;}
-  }
-</style>
+        button.btn-secondary {
+            background: var(--md-sys-color-surface-variant);
+            color: var(--md-sys-color-on-surface);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .code-block {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            background: #1e1f22;
+            color: #e3e2e6;
+            padding: 14px;
+            border-radius: 16px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+            white-space: pre;
+        }
+
+        .output-box {
+            margin-top: 14px;
+            padding: 14px;
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 12px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 13px;
+            word-break: break-all;
+            display: none;
+        }
+
+        .req-card {
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 12px;
+            background: var(--md-sys-color-surface);
+        }
+
+        .req-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .req-model {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--md-sys-color-primary);
+        }
+
+        .req-badge {
+            background: var(--md-sys-color-success-container);
+            color: var(--md-sys-color-success);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 8px;
+        }
+
+        .req-meta {
+            font-size: 11px;
+            color: var(--md-sys-color-on-surface-variant);
+            display: flex;
+            gap: 12px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .model-card {
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--md-sys-color-surface);
+        }
+
+        .model-name {
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--md-sys-color-primary);
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .model-desc {
+            font-size: 12px;
+            color: var(--md-sys-color-on-surface-variant);
+            margin: 4px 0 0 0;
+        }
+    </style>
 </head>
 <body>
 
-<div class="frame">
+<div class="app-container">
 
-  <div class="head">
-    <div class="head-id">
-      <div class="name">crystal-provider</div>
-      <div class="sub">worker console</div>
-    </div>
-    <div class="status-line" id="statusLine">
-      <span class="dot pending" id="statusDot"></span>
-      <span id="statusText">checking…</span>
-    </div>
-  </div>
-
-  <div class="nav" role="tablist">
-    <button class="tab active" data-tab="requests">requests</button>
-    <button class="tab" data-tab="tester">tester</button>
-    <button class="tab" data-tab="keys">keys</button>
-    <button class="tab" data-tab="models">models</button>
-    <button class="tab" data-tab="docs">docs</button>
-  </div>
-
-  <!-- REQUESTS -->
-  <div class="panel active" id="panel-requests">
-    <div class="section-head">
-      <h2>Request log</h2>
-      <button class="link-btn" onclick="fetchRequests()">refresh</button>
-    </div>
-    <p class="desc">Last 20 calls. Admin secret required — set it once below, it's kept in memory for this session only.</p>
-
-    <div class="field">
-      <label for="logsAdminSecret">Admin secret</label>
-      <input type="password" id="logsAdminSecret" placeholder="required to load logs" autocomplete="off">
+    <div class="brand-header">
+        <h1>Crystal Provider</h1>
+        <p>Text & Image AI Generation Console</p>
     </div>
 
-    <div id="requestsContainer">
-      <div class="empty">Enter the admin secret and press refresh.</div>
-    </div>
-  </div>
-
-  <!-- TESTER -->
-  <div class="panel" id="panel-tester">
-    <div class="section-head"><h2>Live tester</h2></div>
-    <p class="desc">Runs a single inference call through the worker with the key and params below.</p>
-
-    <div class="field">
-      <label for="testModel">Model</label>
-      <select id="testModel"></select>
+    <div class="nav-wrapper">
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('requests', event)">📊 Requests</button>
+            <button class="tab-btn" onclick="switchTab('tester', event)">⚡ Tester</button>
+            <button class="tab-btn" onclick="switchTab('keys', event)">🔑 Keys</button>
+            <button class="tab-btn" onclick="switchTab('models', event)">🤖 Models</button>
+            <button class="tab-btn" onclick="switchTab('instructions', event)">📖 Instructions</button>
+        </div>
     </div>
 
-    <div class="field">
-      <label for="testApiKey">API key</label>
-      <input type="text" id="testApiKey" placeholder="cry_live_…" autocomplete="off">
+    <!-- TAB 1: REQUESTS -->
+    <div id="tab-requests" class="tab-content active">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h2>Live Request Log</h2>
+                <button class="btn-secondary" onclick="fetchRequests()">🔄 Refresh</button>
+            </div>
+            <p class="subtitle">Real-time GPU execution, prompt records, and hardware signatures.</p>
+
+            <div id="requestsContainer">
+                <p style="font-size:13px; color:var(--md-sys-color-on-surface-variant);">Click Refresh to pull latest request data.</p>
+            </div>
+        </div>
     </div>
 
-    <div class="grid-2">
-      <div class="field">
-        <label for="maxTokens">Max tokens</label>
-        <input type="number" id="maxTokens" value="2048" min="1" max="4096">
-      </div>
-      <div class="field">
-        <label for="temperature">Temperature</label>
-        <input type="number" id="temperature" value="0.7" step="0.1" min="0" max="2">
-      </div>
+    <!-- TAB 2: TESTER -->
+    <div id="tab-tester" class="tab-content">
+        <div class="card">
+            <h2>Live AI Tester</h2>
+            <p class="subtitle">Execute text generation or text-to-image synthesis on Cloudflare GPUs.</p>
+
+            <label>Select AI Model</label>
+            <select id="testModel">
+                <optgroup label="🎨 Image Generation Models (Free)">
+                    <option value="@cf/black-forest-labs/flux-1-schnell" selected>Flux 1 Schnell (Next-Gen 4-Step)</option>
+                    <option value="@cf/stabilityai/stable-diffusion-xl-base-1.0">Stable Diffusion XL 1.0 (High-Res 1024x1024)</option>
+                    <option value="@cf/bytedance/stable-diffusion-xl-lightning">SDXL Lightning (Sub-Second)</option>
+                    <option value="@cf/lykon/dreamshaper-8-lcm">DreamShaper 8 LCM (Art & Photorealism)</option>
+                    <option value="@cf/segmind/portrait-plus">Portrait Plus (Character & Face Specialist)</option>
+                </optgroup>
+                <optgroup label="💬 Text & Reasoning Models">
+                    <option value="@cf/meta/llama-3.3-70b-instruct-fp8-fast">Meta Llama 3.3 70B Instruct</option>
+                    <option value="@cf/meta/llama-3.1-8b-instruct-fp8-fast">Meta Llama 3.1 8B Instruct</option>
+                    <option value="@cf/deepseek-ai/deepseek-r1-distill-qwen-32b">DeepSeek R1 Distill Qwen 32B</option>
+                    <option value="@cf/qwen/qwen2.5-coder-32b-instruct">Qwen 2.5 Coder 32B</option>
+                    <option value="@cf/defog/sqlcoder-7b-2">SQLCoder 7B (SQL Specialist)</option>
+                    <option value="@cf/google/gemma-7b-it">Google Gemma 7B</option>
+                    <option value="@cf/mistral/mistral-7b-instruct-v0.1">Mistral 7B Instruct</option>
+                </optgroup>
+            </select>
+
+            <label>API Key</label>
+            <input type="text" id="testApiKey" placeholder="cry_live_...">
+
+            <div class="row-grid">
+                <div>
+                    <label>Max Tokens (Text)</label>
+                    <input type="number" id="maxTokens" value="2048">
+                </div>
+                <div>
+                    <label>Temperature</label>
+                    <input type="number" id="temperature" value="0.7" step="0.1">
+                </div>
+            </div>
+
+            <label>Prompt / Image Description</label>
+            <textarea id="testPrompt" rows="3">A futuristic neon cyberpunk city in the rain, ultra detailed, 8k resolution</textarea>
+
+            <button class="btn-primary" onclick="runTest()">Run Model Test</button>
+
+            <div id="testResult" class="output-box"></div>
+        </div>
     </div>
 
-    <div class="field">
-      <label for="testPrompt">Prompt</label>
-      <textarea id="testPrompt" rows="3">Explain quantum computing in two sentences.</textarea>
+    <!-- TAB 3: KEYS -->
+    <div id="tab-keys" class="tab-content">
+        <div class="card">
+            <h2>API Key Generator</h2>
+            <p class="subtitle">Generate secure keys pre-loaded with free tokens.</p>
+            <div class="badge-quota">🎁 Quota: 20,000,000 Free Tokens / Key</div>
+            
+            <label>Admin Secret</label>
+            <input type="password" id="adminSecret" placeholder="crystal_admin_2026">
+            <button class="btn-primary" onclick="generateKey()">Generate API Key</button>
+            <div id="keyOutput" class="output-box"></div>
+        </div>
     </div>
 
-    <button class="run" id="runTestBtn" onclick="runTest()">Run inference</button>
+    <!-- TAB 4: MODELS -->
+    <div id="tab-models" class="tab-content">
+        <div class="card">
+            <h2>Available Models Catalog</h2>
+            <p class="subtitle">Active text, code, and image generation models.</p>
 
-    <div id="testResult" class="out"></div>
-  </div>
+            <h3>🎨 Image Generation Models (5)</h3>
+            <div class="model-card">
+                <span class="model-name">@cf/black-forest-labs/flux-1-schnell</span>
+                <p class="model-desc">State-of-the-art 4-step image model with exceptional prompt understanding.</p>
+            </div>
+            <div class="model-card">
+                <span class="model-name">@cf/stabilityai/stable-diffusion-xl-base-1.0</span>
+                <p class="model-desc">Standard high-resolution 1024x1024 text-to-image synthesis model.</p>
+            </div>
+            <div class="model-card">
+                <span class="model-name">@cf/bytedance/stable-diffusion-xl-lightning</span>
+                <p class="model-desc">ByteDance ultra-fast distilled model for low-latency image generation.</p>
+            </div>
+            <div class="model-card">
+                <span class="model-name">@cf/lykon/dreamshaper-8-lcm</span>
+                <p class="model-desc">Latent Consistency Model tuned for photorealistic portraits and artwork.</p>
+            </div>
+            <div class="model-card">
+                <span class="model-name">@cf/segmind/portrait-plus</span>
+                <p class="model-desc">Specialized model fine-tuned for high-detail human face and portrait rendering.</p>
+            </div>
 
-  <!-- KEYS -->
-  <div class="panel" id="panel-keys">
-    <div class="section-head"><h2>Generate key</h2></div>
-    <p class="desc">Creates a new <span style="color:var(--text)">cry_live_</span> key via the worker's admin route. Requires the admin secret — this is a destructive-adjacent action, treat the secret like a password, not a query param.</p>
-
-    <div class="field">
-      <label for="keyLabel">Label (optional)</label>
-      <input type="text" id="keyLabel" placeholder="e.g. android-app, internal-test" maxlength="100">
+            <h3>💬 Text & Logic Models</h3>
+            <div class="model-card">
+                <span class="model-name">@cf/meta/llama-3.3-70b-instruct-fp8-fast</span>
+                <p class="model-desc">Meta's flagship 70B model for advanced reasoning and instruction following.</p>
+            </div>
+            <div class="model-card">
+                <span class="model-name">@cf/deepseek-ai/deepseek-r1-distill-qwen-32b</span>
+                <p class="model-desc">DeepSeek R1 reasoning architecture distilled into Qwen 32B for logic/math.</p>
+            </div>
+            <div class="model-card">
+                <span class="model-name">@cf/qwen/qwen2.5-coder-32b-instruct</span>
+                <p class="model-desc">Specialized software engineering model for code generation and debugging.</p>
+            </div>
+        </div>
     </div>
 
-    <div class="field">
-      <label for="adminSecret">Admin secret</label>
-      <input type="password" id="adminSecret" placeholder="required" autocomplete="off">
-    </div>
+    <!-- TAB 5: INSTRUCTIONS -->
+    <div id="tab-instructions" class="tab-content">
+        <div class="card">
+            <h2>Integration Guide</h2>
+            <p class="subtitle">API usage examples for text and image models.</p>
 
-    <button class="run" onclick="generateKey()">Generate key</button>
-    <div id="keyOutput" class="out"></div>
-
-    <div class="section-head" style="margin-top:28px;"><h2>Revoke key</h2></div>
-    <p class="desc">Deactivates a key immediately. This does not delete the log history tied to it.</p>
-
-    <div class="field">
-      <label for="revokeKeyInput">Key to revoke</label>
-      <input type="text" id="revokeKeyInput" placeholder="cry_live_…" autocomplete="off">
-    </div>
-    <button class="run danger" onclick="revokeKey()">Revoke key</button>
-    <div id="revokeOutput" class="out"></div>
-  </div>
-
-  <!-- MODELS -->
-  <div class="panel" id="panel-models">
-    <div class="section-head"><h2>Allowed models</h2></div>
-    <p class="desc">Pulled from the worker's <span style="color:var(--text)">ALLOWED_MODELS</span> set. Any other model string sent in a request falls back to the default silently — this list is the ground truth, not a wishlist.</p>
-
-    <div class="model-table" id="modelTable"></div>
-
-    <div class="note">To add a model here, add it to <span style="color:var(--text-dim)">ALLOWED_MODELS</span> in worker.js and redeploy. This page reads from that same list — nothing shown here is decorative.</div>
-  </div>
-
-  <!-- DOCS -->
-  <div class="panel" id="panel-docs">
-    <div class="section-head"><h2>Integration</h2></div>
-    <p class="desc">Chat endpoint. Auth via header, not query string.</p>
-
-<pre class="code">POST <span id="docBaseUrl"></span>/
-Headers:
-  <span class="k">X-Crystal-Key</span>: cry_live_…
-  <span class="k">Content-Type</span>: application/json
-
-Body:
-{
-  "model": "@cf/meta/llama-3.1-8b-instruct-fp8-fast",
-  "prompt": "Hello world",
-  "max_tokens": 2048,
-  "temperature": 0.7
-}</pre>
-
-    <p class="desc">Response shape on success:</p>
-<pre class="code">{
-  "status": "success",
-  "model_used": "…",
-  "request_id": "…",
-  "rate_limit_remaining": 19,
-  "verification": {
-    "authentic_cf_ray": "…",
-    "datacenter_colo": "…",
-    "client_country": "…",
-    "gpu_execution_latency_ms": 412
+            <h3>1. Text Generation (JavaScript)</h3>
+            <div class="code-block">fetch("https://crystal-api.baddampujithareddy19.workers.dev/", {
+  method: "POST",
+  headers: {
+    "X-Crystal-Key": "YOUR_CRYSTAL_KEY",
+    "Content-Type": "application/json"
   },
-  "result": "…"
-}</pre>
+  body: JSON.stringify({
+    model: "@cf/meta/llama-3.1-8b-instruct-fp8-fast",
+    prompt: "Write a sorting algorithm in JavaScript"
+  })
+})
+.then(res => res.json())
+.then(data => console.log(data.result));</div>
 
-    <p class="desc">Rate limit: 20 requests / 60s per key. A 429 includes a <span style="color:var(--text)">Retry-After</span> header.</p>
-
-    <div class="note">Admin routes (<span style="color:var(--text-dim)">/v1/create-key</span>, <span style="color:var(--text-dim)">/v1/revoke-key</span>, <span style="color:var(--text-dim)">/v1/requests</span>) require <span style="color:var(--text-dim)">X-Admin-Secret</span> and are not callable from a browser unless <span style="color:var(--text-dim)">ADMIN_ALLOWED_ORIGIN</span> is set to this page's origin on the worker.</div>
-  </div>
+            <h3>2. Image Generation (Returns Base64 Data URL)</h3>
+            <div class="code-block">fetch("https://crystal-api.baddampujithareddy19.workers.dev/", {
+  method: "POST",
+  headers: {
+    "X-Crystal-Key": "YOUR_CRYSTAL_KEY",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "@cf/black-forest-labs/flux-1-schnell",
+    prompt: "A beautiful dragon flying over snow mountains"
+  })
+})
+.then(res => res.json())
+.then(data => {
+  // data.result is "data:image/png;base64,..."
+  document.getElementById("myImage").src = data.result;
+});</div>
+        </div>
+    </div>
 
 </div>
 
 <script>
-  const API_BASE_URL = "https://crystal-api.baddampujithareddy19.workers.dev";
+    const API_BASE_URL = "https://crystal-api.baddampujithareddy19.workers.dev";
 
-  // Ground truth — must mirror ALLOWED_MODELS in worker.js exactly.
-  // If you change the allowlist server-side, update this array too.
-  const ALLOWED_MODELS = [
-    "@cf/meta/llama-3.1-8b-instruct-fp8-fast",
-    "@cf/meta/llama-3.1-70b-instruct",
-    "@cf/mistral/mistral-7b-instruct-v0.2"
-  ];
+    function switchTab(tabId, evt) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        evt.target.classList.add('active');
+        document.getElementById(`tab-${tabId}`).classList.add('active');
 
-  document.getElementById("docBaseUrl").textContent = API_BASE_URL;
-
-  // ---- tabs ----
-  document.querySelectorAll(".nav .tab").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".nav .tab").forEach(b => b.classList.remove("active"));
-      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-      btn.classList.add("active");
-      document.getElementById(`panel-${btn.dataset.tab}`).classList.add("active");
-      if (btn.dataset.tab === "requests" && !requestsLoadedOnce) {
-        // don't auto-fire on first paint since it requires a secret; just focus the field
-        document.getElementById("logsAdminSecret").focus();
-      }
-    });
-  });
-
-  // ---- populate model select + models tab from the single source of truth ----
-  function populateModels() {
-    const select = document.getElementById("testModel");
-    select.innerHTML = ALLOWED_MODELS.map(m => `<option value="${m}">${m}</option>`).join("");
-
-    const table = document.getElementById("modelTable");
-    table.innerHTML = ALLOWED_MODELS.map(m => `
-      <div class="model-row">
-        <span class="mname">${m}</span>
-        <span class="mflag allowed">allowed</span>
-      </div>
-    `).join("");
-  }
-  populateModels();
-
-  // ---- status ping ----
-  async function checkStatus() {
-    const dot = document.getElementById("statusDot");
-    const text = document.getElementById("statusText");
-    dot.className = "dot pending";
-    text.textContent = "checking…";
-    const start = performance.now();
-    try {
-      const res = await fetch(`${API_BASE_URL}/`, { method: "OPTIONS" });
-      const ms = Math.round(performance.now() - start);
-      if (res.ok) {
-        dot.className = "dot ok";
-        text.textContent = `online · ${ms}ms`;
-      } else {
-        dot.className = "dot bad";
-        text.textContent = `http ${res.status}`;
-      }
-    } catch (e) {
-      dot.className = "dot bad";
-      text.textContent = "unreachable";
-    }
-  }
-  checkStatus();
-
-  // ---- requests ----
-  let requestsLoadedOnce = false;
-
-  async function fetchRequests() {
-    const container = document.getElementById("requestsContainer");
-    const secret = document.getElementById("logsAdminSecret").value.trim();
-
-    if (!secret) {
-      container.innerHTML = `<div class="empty">Admin secret required to load logs.</div>`;
-      return;
+        if(tabId === 'requests') fetchRequests();
     }
 
-    container.innerHTML = `<div class="empty">Loading…</div>`;
-    requestsLoadedOnce = true;
+    async function fetchRequests() {
+        const container = document.getElementById("requestsContainer");
+        container.innerHTML = `<p style="font-size:13px;">Loading live request logs...</p>`;
 
-    try {
-      const res = await fetch(`${API_BASE_URL}/v1/requests`, {
-        headers: { "X-Admin-Secret": secret }
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        container.innerHTML = `<div class="empty">${escapeHtml(data.error || `Request failed (${res.status})`)}</div>`;
-        return;
-      }
-
-      if (data.requests && data.requests.length > 0) {
-        container.innerHTML = data.requests.map(req => `
-          <div class="row">
-            <div class="row-top">
-              <span class="row-model">${escapeHtml(req.model || "unknown")}</span>
-              <span class="row-latency">${formatLatency(req)}</span>
-            </div>
-            <div class="row-body">
-              <span class="lbl">prompt</span> ${escapeHtml(req.prompt_preview ?? req.prompt ?? "—")}<br>
-              <span class="lbl">response</span> ${escapeHtml(req.response_preview ?? req.response ?? "—")}
-            </div>
-            <div class="row-meta">
-              <span>${escapeHtml(formatTimestamp(req.timestamp))}</span>
-              <span>${escapeHtml(req.country || "??")} · ${escapeHtml(req.colo || "??")}</span>
-              <span>${escapeHtml(req.cfRay || req.request_id || "—")}</span>
-            </div>
-          </div>
-        `).join("");
-      } else {
-        container.innerHTML = `<div class="empty">No requests logged yet. Run something from the tester tab.</div>`;
-      }
-    } catch (e) {
-      container.innerHTML = `<div class="empty">Network error — could not reach the worker.</div>`;
-    }
-  }
-
-  function formatLatency(req) {
-    if (typeof req.latency_ms === "number") return `${req.latency_ms}ms`;
-    if (typeof req.latency === "string") return req.latency; // legacy field, in case of old logs
-    return "—";
-  }
-
-  function formatTimestamp(ts) {
-    if (!ts) return "—";
-    // logs may be ISO (new worker) or a locale time string (legacy) — handle both
-    const d = new Date(ts);
-    if (isNaN(d.getTime())) return ts;
-    return d.toLocaleString();
-  }
-
-  // ---- tester ----
-  async function runTest() {
-    const apiKey = document.getElementById("testApiKey").value.trim();
-    const prompt = document.getElementById("testPrompt").value;
-    const model = document.getElementById("testModel").value;
-    const maxTokens = parseInt(document.getElementById("maxTokens").value, 10);
-    const temperature = parseFloat(document.getElementById("temperature").value);
-    const out = document.getElementById("testResult");
-    const btn = document.getElementById("runTestBtn");
-
-    if (!apiKey) {
-      out.className = "out bad";
-      out.style.display = "block";
-      out.textContent = "Enter an API key first.";
-      return;
+        try {
+            const res = await fetch(`${API_BASE_URL}/v1/requests`);
+            const data = await res.json();
+            
+            if(data.requests && data.requests.length > 0) {
+                container.innerHTML = data.requests.map(req => `
+                    <div class="req-card">
+                        <div class="req-header">
+                            <span class="req-model">${req.model}</span>
+                            <span class="req-badge">${req.latency}</span>
+                        </div>
+                        <div style="font-size:12px; margin: 8px 0; padding: 8px; background: var(--md-sys-color-surface-variant); border-radius: 8px;">
+                            <strong>Prompt:</strong> ${req.prompt || 'N/A'}<br>
+                            <strong>Response Payload:</strong> ${req.type === 'image' ? '🖼️ [Generated Base64 PNG Image]' : (req.response ? req.response.substring(0, 150) + '...' : 'N/A')}
+                        </div>
+                        <div class="req-meta">
+                            <span>🕒 ${req.timestamp}</span>
+                            <span>📍 ${req.country} (${req.colo})</span>
+                            <span>🆔 ${req.cfRay}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = `<p style="font-size:13px; color:var(--md-sys-color-on-surface-variant);">No requests logged yet. Execute a prompt in the Tester tab!</p>`;
+            }
+        } catch(e) {
+            container.innerHTML = `<p style="font-size:13px; color:var(--md-sys-color-danger);">Failed to load request log.</p>`;
+        }
     }
 
-    btn.disabled = true;
-    out.className = "out";
-    out.style.display = "block";
-    out.textContent = `→ ${model}\nwaiting for response…`;
+    async function runTest() {
+        const apiKey = document.getElementById("testApiKey").value.trim();
+        const prompt = document.getElementById("testPrompt").value;
+        const model = document.getElementById("testModel").value;
+        const maxTokens = parseInt(document.getElementById("maxTokens").value);
+        const temperature = parseFloat(document.getElementById("temperature").value);
+        const out = document.getElementById("testResult");
 
-    try {
-      const res = await fetch(`${API_BASE_URL}/`, {
-        method: "POST",
-        headers: {
-          "X-Crystal-Key": apiKey,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ model, prompt, max_tokens: maxTokens, temperature })
-      });
+        if(!apiKey) return alert("Enter an API Key.");
 
-      const data = await res.json();
+        out.style.display = "block";
+        out.innerHTML = `Requesting GPU execution...<br><span style="font-size:11px; color:var(--md-sys-color-primary);">Model: ${model}</span>`;
 
-      if (res.ok && data.status === "success") {
-        const latency = data.verification?.gpu_execution_latency_ms;
-        const colo = data.verification?.datacenter_colo;
-        out.className = "out ok";
-        out.innerHTML =
-          `<span class="k">model</span> <span class="v">${escapeHtml(data.model_used)}</span>\n` +
-          `<span class="k">latency</span> <span class="v">${latency !== undefined ? latency + "ms" : "—"}</span>\n` +
-          `<span class="k">colo</span> <span class="v">${escapeHtml(colo || "—")}</span>\n` +
-          `<span class="k">rate limit remaining</span> <span class="v">${data.rate_limit_remaining ?? "—"}</span>\n\n` +
-          `${escapeHtml(data.result || "")}`;
-        setTimeout(() => {
-          if (document.getElementById("logsAdminSecret").value.trim()) fetchRequests();
-        }, 800);
-      } else {
-        out.className = "out bad";
-        out.textContent = data.error
-          ? `${data.error}${data.details ? "\n" + data.details : ""}`
-          : `Request failed (${res.status})`;
-      }
-    } catch (e) {
-      out.className = "out bad";
-      out.textContent = "Network error — could not reach the worker.";
-    } finally {
-      btn.disabled = false;
-    }
-  }
+        try {
+            const res = await fetch(`${API_BASE_URL}/`, {
+                method: "POST",
+                headers: {
+                    "X-Crystal-Key": apiKey,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    model: model,
+                    prompt: prompt,
+                    max_tokens: maxTokens,
+                    temperature: temperature
+                })
+            });
 
-  // ---- keys ----
-  async function generateKey() {
-    const secret = document.getElementById("adminSecret").value;
-    const label = document.getElementById("keyLabel").value.trim();
-    const out = document.getElementById("keyOutput");
-
-    if (!secret) {
-      out.className = "out bad";
-      out.style.display = "block";
-      out.textContent = "Admin secret required.";
-      return;
+            const data = await res.json();
+            if(data.status === "success") {
+                if(data.type === "image" || (data.result && data.result.startsWith("data:image/"))) {
+                    out.innerHTML = `<strong>[Model Used]:</strong> ${data.model_used}<br><strong>[GPU Latency]:</strong> ${data.verification?.gpu_execution_latency || 'N/A'}<br><br><strong>[Generated Image]:</strong><br><img src="${data.result}" style="width:100%; max-width:450px; border-radius:12px; margin-top:10px; border:1px solid var(--md-sys-color-outline-variant);" alt="AI Generated Output"/>`;
+                } else {
+                    out.innerText = `[Model Used]: ${data.model_used}\n[GPU Latency]: ${data.verification?.gpu_execution_latency || 'N/A'}\n\n[Response]:\n${data.result}`;
+                }
+                setTimeout(fetchRequests, 1000);
+            } else {
+                out.innerText = "Error: " + (data.error || "Unknown Error");
+            }
+        } catch(e) {
+            out.innerText = "Network Error during request.";
+        }
     }
 
-    out.className = "out";
-    out.style.display = "block";
-    out.textContent = "generating…";
+    async function generateKey() {
+        const secret = document.getElementById("adminSecret").value;
+        const out = document.getElementById("keyOutput");
+        if(!secret) return alert("Enter admin secret.");
 
-    try {
-      const res = await fetch(`${API_BASE_URL}/v1/create-key`, {
-        method: "POST",
-        headers: {
-          "X-Admin-Secret": secret,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(label ? { label } : {})
-      });
-      const data = await res.json();
+        out.style.display = "block";
+        out.innerText = "Generating Key...";
 
-      if (res.ok && data.status === "success") {
-        out.className = "out ok";
-        out.innerHTML = `<span class="k">new key</span>\n<strong>${escapeHtml(data.api_key)}</strong>\n\nCopy this now — it won't be shown again.`;
-        document.getElementById("testApiKey").value = data.api_key;
-      } else {
-        out.className = "out bad";
-        out.textContent = data.error || `Request failed (${res.status})`;
-      }
-    } catch (e) {
-      out.className = "out bad";
-      out.textContent = "Network error — could not reach the worker.";
-    }
-  }
-
-  async function revokeKey() {
-    const secret = document.getElementById("adminSecret").value;
-    const key = document.getElementById("revokeKeyInput").value.trim();
-    const out = document.getElementById("revokeOutput");
-
-    if (!secret) {
-      out.className = "out bad";
-      out.style.display = "block";
-      out.textContent = "Admin secret required (same field as above).";
-      return;
-    }
-    if (!key.startsWith("cry_live_")) {
-      out.className = "out bad";
-      out.style.display = "block";
-      out.textContent = "Enter a valid cry_live_ key.";
-      return;
+        try {
+            const res = await fetch(`${API_BASE_URL}/v1/create-key`, {
+                method: "POST",
+                headers: { "X-Admin-Secret": secret }
+            });
+            const data = await res.json();
+            if(data.status === "success") {
+                out.innerHTML = `Created Key:<br><strong>${data.api_key}</strong>`;
+                document.getElementById("testApiKey").value = data.api_key;
+            } else {
+                out.innerText = "Error: " + data.error;
+            }
+        } catch(e) {
+            out.innerText = "Network Error.";
+        }
     }
 
-    out.className = "out";
-    out.style.display = "block";
-    out.textContent = "revoking…";
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/v1/revoke-key`, {
-        method: "POST",
-        headers: {
-          "X-Admin-Secret": secret,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ api_key: key })
-      });
-      const data = await res.json();
-
-      if (res.ok && data.status === "success") {
-        out.className = "out ok";
-        out.textContent = "Key revoked.";
-      } else {
-        out.className = "out bad";
-        out.textContent = data.error || `Request failed (${res.status})`;
-      }
-    } catch (e) {
-      out.className = "out bad";
-      out.textContent = "Network error — could not reach the worker.";
-    }
-  }
-
-  function escapeHtml(str) {
-    if (str === null || str === undefined) return "";
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
-  }
+    fetchRequests();
 </script>
 
 </body>
