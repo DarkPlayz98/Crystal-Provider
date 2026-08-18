@@ -54,7 +54,7 @@ export default {
       return new Response(JSON.stringify({ error: "Invalid or revoked API key." }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // 4. Parse Request
+    // 4. Parse Request Payload
     let userPrompt = "Write an analytical essay on artificial intelligence.";
     let imageBase64 = null;
     let webSearchEnabled = false;
@@ -74,11 +74,13 @@ export default {
       } catch (e) {}
     }
 
+    // Synchronized Image Models Array
     const cfImageModels = [
       "@cf/black-forest-labs/flux-1-schnell",
       "@cf/stabilityai/stable-diffusion-xl-base-1.0",
       "@cf/bytedance/stable-diffusion-xl-lightning",
-      "@cf/lykon/dreamshaper-8-lcm"
+      "@cf/lykon/dreamshaper-8-lcm",
+      "@cf/segmind/portrait-plus"
     ];
 
     const isDalle3 = model === "dall-e-3";
@@ -89,13 +91,13 @@ export default {
       let finalResult = "";
 
       if (isDalle3) {
-        // Free DALL-E 3 Proxy Gateway Pipeline
+        // Free DALL-E 3 Proxy Gateway
         const encodedPrompt = encodeURIComponent(userPrompt);
         const seed = Math.floor(Math.random() * 999999);
         finalResult = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=dalle-3&seed=${seed}&nologo=true`;
 
       } else if (isImageModel) {
-        // Free Cloudflare Edge Image Generation
+        // Edge Image Generation
         const imageStream = await env.AI.run(model, { prompt: userPrompt });
         const arrayBuffer = await new Response(imageStream).arrayBuffer();
         let binary = "";
@@ -109,7 +111,6 @@ export default {
         // Text, Vision & Web Search Models Execution
         let userContent = userPrompt;
 
-        // Perform Edge Web Search integration if enabled or agentic model requested
         if (webSearchEnabled || model.includes("kimi") || model.includes("glm")) {
           try {
             const searchRes = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(userPrompt)}`);
@@ -123,7 +124,6 @@ export default {
           } catch(err) {}
         }
 
-        // Multimodal Vision Array construction
         let messagesPayload = [];
         if (imageBase64) {
           messagesPayload = [
@@ -156,7 +156,6 @@ export default {
       const datacenterColo = request.cf?.colo || "UNKNOWN";
       const clientCountry = request.cf?.country || request.headers.get("cf-ipcountry") || "XX";
 
-      // Log activity item to KV store
       const logItem = {
         timestamp: new Date().toLocaleTimeString(),
         model: model,
