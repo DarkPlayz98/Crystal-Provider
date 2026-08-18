@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crystal AI | Fart Enterprise Gateway</title>
+    <title>Crystal AI | Enterprise Gateway</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
     
     <style>
-        /* Material Design 3 - Full White Theme */
         :root {
             --md-sys-color-background: #FFFFFF;
             --md-sys-color-on-background: #1F1F1F;
@@ -51,17 +50,15 @@
 
         .container { width: 100%; max-width: 950px; display: flex; flex-direction: column; gap: 20px; }
         
-        /* Typography */
         h1, h2, h3 { font-family: 'Google Sans', sans-serif; margin: 0; }
         .title-medium { font-size: 22px; font-weight: 500; }
+        .title-small { font-size: 16px; font-weight: 500; }
         .body-medium { font-size: 14px; font-weight: 400; color: #444746; }
 
-        /* App Header */
         .app-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 4px; }
         .brand-logo { display: flex; align-items: center; gap: 12px; color: var(--md-sys-color-primary); }
         .brand-logo .material-symbols-outlined { font-size: 32px; }
 
-        /* Navigation Tabs (Scrollable Horizontal Pill Bar) */
         .nav-container { 
             display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;
             scrollbar-width: none;
@@ -91,7 +88,6 @@
 
         .nav-chip .material-symbols-outlined { font-size: 18px; }
 
-        /* Tab Cards */
         .tab-panel { display: none; animation: fadeIn 0.25s ease; }
         .tab-panel.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
@@ -106,7 +102,6 @@
             gap: 20px;
         }
 
-        /* Inputs & Controls */
         .input-group { display: flex; flex-direction: column; gap: 8px; }
         .input-group label { font-size: 12px; font-weight: 500; color: var(--md-sys-color-outline); padding-left: 4px; }
         
@@ -128,7 +123,6 @@
             box-shadow: 0 0 0 1px var(--md-sys-color-primary);
         }
 
-        /* Buttons */
         .btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
             padding: 12px 24px;
@@ -144,7 +138,6 @@
         .btn-filled:hover { background: #0842A0; }
         .btn-tonal { background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-background); }
 
-        /* Logs & Data Items */
         .list-item {
             display: flex; align-items: flex-start; gap: 16px;
             padding: 16px;
@@ -165,14 +158,12 @@
         .list-meta { font-size: 12px; color: var(--md-sys-color-outline); }
         .list-body { font-size: 13px; color: #444746; line-height: 1.4; word-break: break-word; }
 
-        /* Badges */
         .badge { padding: 4px 10px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 500; }
         .badge-image { background: #E0F2FE; color: #0369A1; }
         .badge-vision { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
         .badge-web { background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container); }
         .badge-free { background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-background); }
 
-        /* Outputs & Code Blocks */
         .output-box {
             background: var(--md-sys-color-surface-container);
             border-radius: var(--radius-input);
@@ -194,7 +185,6 @@
 <body>
 
 <div class="container">
-    <!-- Header -->
     <header class="app-header">
         <div class="brand-logo">
             <span class="material-symbols-outlined">auto_awesome</span>
@@ -205,7 +195,6 @@
         </div>
     </header>
 
-    <!-- Dedicated Navigation Tabs -->
     <nav class="nav-container">
         <button class="nav-chip active" onclick="switchTab('image', event)">
             <span class="material-symbols-outlined">image</span> Image Generator
@@ -233,22 +222,22 @@
         </button>
     </nav>
 
-    <!-- PAGE 1: DEDICATED IMAGE GENERATOR -->
+    <!-- TAB 1: IMAGE GENERATOR -->
     <main id="tab-image" class="tab-panel active md-card">
         <div>
             <h2 class="title-medium">Image Generation Studio</h2>
-            <p class="body-medium">Dedicated page for DALL-E 3 & Cloudflare edge diffusion models.</p>
+            <p class="body-medium">Dedicated tab for image models.</p>
         </div>
 
         <div class="input-group">
             <label>Select Image Model</label>
             <select id="imageModel">
-                <option value="dall-e-3" selected>DALL-E 3 (High Precision Proxy - 100% Free)</option>
-                <option value="@cf/black-forest-labs/flux-1-schnell">FLUX.1 Schnell (4-Step Superfast)</option>
-                <option value="@cf/stabilityai/stable-diffusion-xl-base-1.0">Stable Diffusion XL 1.0 (1024x1024 Base)</option>
-                <option value="@cf/bytedance/stable-diffusion-xl-lightning">SDXL Lightning (Sub-Second Turbo)</option>
-                <option value="@cf/lykon/dreamshaper-8-lcm">DreamShaper 8 LCM (Photorealistic Fine-Tune)</option>
-                <option value="@cf/segmind/portrait-plus">Portrait Plus (Stylized Character Generator)</option>
+                <option value="dall-e-3" selected>dall-e-3 (Free High-Precision Proxy)</option>
+                <option value="@cf/black-forest-labs/flux-1-schnell">@cf/black-forest-labs/flux-1-schnell</option>
+                <option value="@cf/stabilityai/stable-diffusion-xl-base-1.0">@cf/stabilityai/stable-diffusion-xl-base-1.0</option>
+                <option value="@cf/bytedance/stable-diffusion-xl-lightning">@cf/bytedance/stable-diffusion-xl-lightning</option>
+                <option value="@cf/lykon/dreamshaper-8-lcm">@cf/lykon/dreamshaper-8-lcm</option>
+                <option value="@cf/segmind/portrait-plus">@cf/segmind/portrait-plus</option>
             </select>
         </div>
 
@@ -258,8 +247,8 @@
         </div>
 
         <div class="input-group">
-            <label>Image Description Prompt</label>
-            <textarea id="imagePrompt" rows="4">A futuristic cyberpunk studio with sleek white architecture, glowing neon blue lines, cinematic lighting, 8k resolution</textarea>
+            <label>Prompt</label>
+            <textarea id="imagePrompt" rows="4">Cyberpunk city street at night with neon signs, 8k resolution, photorealistic</textarea>
         </div>
 
         <button class="btn btn-filled" onclick="runImageGen()">
@@ -268,19 +257,19 @@
         <div id="imageResult" class="output-box"></div>
     </main>
 
-    <!-- PAGE 2: DEDICATED VISION ANALYZER -->
+    <!-- TAB 2: VISION ANALYZER -->
     <main id="tab-vision" class="tab-panel md-card">
         <div>
             <h2 class="title-medium">Vision & Multimodal Studio</h2>
-            <p class="body-medium">Dedicated page for image recognition, document parsing, and visual analysis.</p>
+            <p class="body-medium">Dedicated tab for visual analysis.</p>
         </div>
 
         <div class="input-group">
             <label>Select Multimodal Model</label>
             <select id="visionModel">
-                <option value="@cf/meta/llama-4-scout-17b-16e-instruct" selected>Meta Llama 4 Scout (17B Multimodal MoE)</option>
-                <option value="@cf/google/gemma-3-26b-it">Google Gemma 3 (26B Vision & Reasoning)</option>
-                <option value="@cf/mistralai/mistral-small-3.1-24b-instruct">Mistral Small 3.1 (24B Long-Context Vision)</option>
+                <option value="@cf/meta/llama-4-scout-17b-16e-instruct" selected>@cf/meta/llama-4-scout-17b-16e-instruct</option>
+                <option value="@cf/google/gemma-3-26b-it">@cf/google/gemma-3-26b-it</option>
+                <option value="@cf/mistralai/mistral-small-3.1-24b-instruct">@cf/mistralai/mistral-small-3.1-24b-instruct</option>
             </select>
         </div>
 
@@ -290,14 +279,14 @@
                 <input type="text" class="globalApiKey" placeholder="cry_live_...">
             </div>
             <div class="input-group">
-                <label>Image Source (Base64 / Data URL)</label>
+                <label>Image Source (Base64 / URL)</label>
                 <input type="text" id="visionImageInput" placeholder="data:image/jpeg;base64,...">
             </div>
         </div>
 
         <div class="input-group">
-            <label>Analysis Instruction / Question</label>
-            <textarea id="visionPrompt" rows="3">Describe the contents of this image in detail and extract any visible text.</textarea>
+            <label>Instruction / Question</label>
+            <textarea id="visionPrompt" rows="3">Describe the contents of this image in detail and extract visible text.</textarea>
         </div>
 
         <button class="btn btn-filled" onclick="runVisionGen()">
@@ -306,18 +295,18 @@
         <div id="visionResult" class="output-box"></div>
     </main>
 
-    <!-- PAGE 3: DEDICATED WEB SEARCH AI -->
+    <!-- TAB 3: WEB SEARCH AI -->
     <main id="tab-websearch" class="tab-panel md-card">
         <div>
             <h2 class="title-medium">Agentic Web Search Studio</h2>
-            <p class="body-medium">Dedicated page for live DuckDuckGo web retrieval and internet research.</p>
+            <p class="body-medium">Dedicated tab for live web retrieval.</p>
         </div>
 
         <div class="input-group">
             <label>Select Agent Model</label>
             <select id="webModel">
-                <option value="@cf/moonshot-ai/kimi-k2.7-code" selected>Kimi K2.7 (Tool Calling & Search Synthesis)</option>
-                <option value="@cf/zhipu-ai/glm-4.7-flash">GLM-4.7 Flash (131k Context Internet Retrieval)</option>
+                <option value="@cf/moonshot-ai/kimi-k2.7-code" selected>@cf/moonshot-ai/kimi-k2.7-code</option>
+                <option value="@cf/zhipu-ai/glm-4.7-flash">@cf/zhipu-ai/glm-4.7-flash</option>
             </select>
         </div>
 
@@ -327,29 +316,29 @@
         </div>
 
         <div class="input-group">
-            <label>Search Query / Research Goal</label>
-            <textarea id="webPrompt" rows="3">What are the latest developments in open-source AI models released this month?</textarea>
+            <label>Search Query</label>
+            <textarea id="webPrompt" rows="3">What are the key technical updates in open-source AI models released recently?</textarea>
         </div>
 
         <button class="btn btn-filled" onclick="runWebSearchGen()">
-            <span class="material-symbols-outlined">public</span> Search & Research
+            <span class="material-symbols-outlined">public</span> Search & Retrieve
         </button>
         <div id="webResult" class="output-box"></div>
     </main>
 
-    <!-- PAGE 4: DEDICATED TEXT & ESSAYS -->
+    <!-- TAB 4: TEXT & ESSAYS -->
     <main id="tab-text" class="tab-panel md-card">
         <div>
             <h2 class="title-medium">Text & Essay Writing Studio</h2>
-            <p class="body-medium">Dedicated page for deep research essays, coding, and long-context writing.</p>
+            <p class="body-medium">Dedicated tab for high-reasoning writing.</p>
         </div>
 
         <div class="input-group">
-            <label>Select Reasoning Model</label>
+            <label>Select Text Model</label>
             <select id="textModel">
-                <option value="@cf/openai/gpt-oss-120b" selected>GPT-OSS 120B (High Precision Research)</option>
-                <option value="@cf/meta/llama-3.3-70b-instruct-fp8-fast">Llama 3.3 70B Instruct</option>
-                <option value="@cf/deepseek-ai/deepseek-r1-distill-qwen-32b">DeepSeek R1 Distill Qwen 32B</option>
+                <option value="@cf/openai/gpt-oss-120b" selected>@cf/openai/gpt-oss-120b</option>
+                <option value="@cf/meta/llama-3.3-70b-instruct-fp8-fast">@cf/meta/llama-3.3-70b-instruct-fp8-fast</option>
+                <option value="@cf/deepseek-ai/deepseek-r1-distill-qwen-32b">@cf/deepseek-ai/deepseek-r1-distill-qwen-32b</option>
             </select>
         </div>
 
@@ -359,8 +348,8 @@
         </div>
 
         <div class="input-group">
-            <label>Essay Topic / Outline Requirements</label>
-            <textarea id="textPrompt" rows="5">Write an analytical essay comparing Mixture of Experts (MoE) neural architectures to traditional dense transformer models.</textarea>
+            <label>Topic / Requirement</label>
+            <textarea id="textPrompt" rows="5">Write a comprehensive analytical essay explaining Mixture-of-Experts (MoE) neural architectures.</textarea>
         </div>
 
         <button class="btn btn-filled" onclick="runTextGen()">
@@ -369,23 +358,22 @@
         <div id="textResult" class="output-box"></div>
     </main>
 
-    <!-- PAGE 5: MODELS CATALOG -->
+    <!-- TAB 5: MODELS CATALOG -->
     <main id="tab-catalog" class="tab-panel md-card">
         <div>
-            <h2 class="title-medium">Complete Models Catalog</h2>
-            <p class="body-medium">Full inventory of available models organized by domain.</p>
+            <h2 class="title-medium">Models Catalog</h2>
+            <p class="body-medium">Exact 1:1 inventory of all active models available in testing dropdowns.</p>
         </div>
 
-        <!-- Image Models List -->
-        <h3 class="title-small" style="color:var(--md-sys-color-primary);">🎨 Restored Image Models</h3>
-        
+        <h3 class="title-small" style="color:var(--md-sys-color-primary);">🎨 Image Generation Models</h3>
+
         <div class="list-item">
             <div class="list-content">
                 <div class="list-header">
                     <span class="list-title">dall-e-3</span>
-                    <span class="badge badge-image">DALL-E Proxy</span>
+                    <span class="badge badge-image">Free Proxy</span>
                 </div>
-                <div class="list-body">Free high-resolution generator with precise prompt positioning.</div>
+                <div class="list-body">Proxy generator delivering high-resolution DALL-E 3 output without API key limits.</div>
             </div>
         </div>
 
@@ -393,9 +381,9 @@
             <div class="list-content">
                 <div class="list-header">
                     <span class="list-title">@cf/black-forest-labs/flux-1-schnell</span>
-                    <span class="badge badge-free">Edge GPU</span>
+                    <span class="badge badge-free">Edge Image</span>
                 </div>
-                <div class="list-body">Next-gen open weights model with superior typography rendering.</div>
+                <div class="list-body">Fast 4-step diffusion model for high detail graphics generation.</div>
             </div>
         </div>
 
@@ -403,14 +391,43 @@
             <div class="list-content">
                 <div class="list-header">
                     <span class="list-title">@cf/stabilityai/stable-diffusion-xl-base-1.0</span>
-                    <span class="badge badge-free">Edge GPU</span>
+                    <span class="badge badge-free">Edge Image</span>
                 </div>
-                <div class="list-body">1024x1024 native resolution graphics generator.</div>
+                <div class="list-body">Base SDXL model for 1024x1024 high fidelity images.</div>
             </div>
         </div>
 
-        <!-- Vision & Search Models List -->
-        <h3 class="title-small" style="color:var(--md-sys-color-primary); margin-top:12px;">👁️ Vision & Web Search Models</h3>
+        <div class="list-item">
+            <div class="list-content">
+                <div class="list-header">
+                    <span class="list-title">@cf/bytedance/stable-diffusion-xl-lightning</span>
+                    <span class="badge badge-free">Edge Image</span>
+                </div>
+                <div class="list-body">Sub-second rapid output diffusion generator.</div>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="list-content">
+                <div class="list-header">
+                    <span class="list-title">@cf/lykon/dreamshaper-8-lcm</span>
+                    <span class="badge badge-free">Edge Image</span>
+                </div>
+                <div class="list-body">Photorealistic fine-tuned image pipeline.</div>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="list-content">
+                <div class="list-header">
+                    <span class="list-title">@cf/segmind/portrait-plus</span>
+                    <span class="badge badge-free">Edge Image</span>
+                </div>
+                <div class="list-body">Stylized portrait and artistic visual generator.</div>
+            </div>
+        </div>
+
+        <h3 class="title-small" style="color:var(--md-sys-color-primary); margin-top:12px;">👁️ Vision & Multimodal Models</h3>
 
         <div class="list-item">
             <div class="list-content">
@@ -418,9 +435,31 @@
                     <span class="list-title">@cf/meta/llama-4-scout-17b-16e-instruct</span>
                     <span class="badge badge-vision">Vision</span>
                 </div>
-                <div class="list-body">Multimodal MoE for detailed image analysis and document reading.</div>
+                <div class="list-body">Multimodal MoE for visual analysis, OCR, and complex document interpretation.</div>
             </div>
         </div>
+
+        <div class="list-item">
+            <div class="list-content">
+                <div class="list-header">
+                    <span class="list-title">@cf/google/gemma-3-26b-it</span>
+                    <span class="badge badge-vision">Vision</span>
+                </div>
+                <div class="list-body">Google open-weights multimodal vision and reasoning architecture.</div>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="list-content">
+                <div class="list-header">
+                    <span class="list-title">@cf/mistralai/mistral-small-3.1-24b-instruct</span>
+                    <span class="badge badge-vision">Vision</span>
+                </div>
+                <div class="list-body">High-efficiency model for Base64 image parsing and long context analysis.</div>
+            </div>
+        </div>
+
+        <h3 class="title-small" style="color:var(--md-sys-color-primary); margin-top:12px;">🌐 Web Search & Agent Models</h3>
 
         <div class="list-item">
             <div class="list-content">
@@ -428,17 +467,59 @@
                     <span class="list-title">@cf/moonshot-ai/kimi-k2.7-code</span>
                     <span class="badge badge-web">Web Search</span>
                 </div>
-                <div class="list-body">Live web retrieval agent for up-to-date internet research.</div>
+                <div class="list-body">Agent model optimized for tool calling and internet query synthesis.</div>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="list-content">
+                <div class="list-header">
+                    <span class="list-title">@cf/zhipu-ai/glm-4.7-flash</span>
+                    <span class="badge badge-web">Web Search</span>
+                </div>
+                <div class="list-body">Long-context agent designed for real-time web retrieval.</div>
+            </div>
+        </div>
+
+        <h3 class="title-small" style="color:var(--md-sys-color-primary); margin-top:12px;">📄 Text & Reasoning Models</h3>
+
+        <div class="list-item">
+            <div class="list-content">
+                <div class="list-header">
+                    <span class="list-title">@cf/openai/gpt-oss-120b</span>
+                    <span class="badge badge-free">Text</span>
+                </div>
+                <div class="list-body">120B parameter model for research and complex technical essays.</div>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="list-content">
+                <div class="list-header">
+                    <span class="list-title">@cf/meta/llama-3.3-70b-instruct-fp8-fast</span>
+                    <span class="badge badge-free">Text</span>
+                </div>
+                <div class="list-body">Fast FP8 quant model for high throughput instruction following.</div>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="list-content">
+                <div class="list-header">
+                    <span class="list-title">@cf/deepseek-ai/deepseek-r1-distill-qwen-32b</span>
+                    <span class="badge badge-free">Text</span>
+                </div>
+                <div class="list-body">Reasoning distilled model for mathematical and algorithmic problems.</div>
             </div>
         </div>
     </main>
 
-    <!-- PAGE 6: LOGS -->
+    <!-- TAB 6: LOGS -->
     <main id="tab-logs" class="tab-panel md-card">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <h2 class="title-medium">Execution Telemetry</h2>
-                <p class="body-medium">Real-time edge activity logs.</p>
+                <h2 class="title-medium">Telemetry Logs</h2>
+                <p class="body-medium">Real-time edge execution history.</p>
             </div>
             <button class="btn btn-tonal" onclick="fetchLogs()">
                 <span class="material-symbols-outlined">refresh</span> Refresh
@@ -450,11 +531,11 @@
         </div>
     </main>
 
-    <!-- PAGE 7: DOCS -->
+    <!-- TAB 7: DOCS -->
     <main id="tab-docs" class="tab-panel md-card">
         <div>
             <h2 class="title-medium">API Integration Docs</h2>
-            <p class="body-medium">Code examples for integrating every dedicated endpoint.</p>
+            <p class="body-medium">Implementation payloads for all available models.</p>
         </div>
 
         <div class="input-group">
@@ -468,13 +549,13 @@
   },
   body: JSON.stringify({
     model: <span class="code-string">"dall-e-3"</span>, <span class="code-keyword">// or "@cf/black-forest-labs/flux-1-schnell"</span>
-    prompt: <span class="code-string">"Futuristic skyline"</span>
+    prompt: <span class="code-string">"Futuristic city render"</span>
   })
 })</div>
         </div>
 
         <div class="input-group" style="margin-top: 12px;">
-            <label>2. Vision Multimodal Endpoint</label>
+            <label>2. Vision & Multimodal Analysis</label>
             <div class="code-block">
 <span class="code-keyword">fetch</span>(<span class="code-string">"https://crystal-api.baddampujithareddy19.workers.dev/"</span>, {
   method: <span class="code-string">"POST"</span>,
@@ -484,14 +565,31 @@
   },
   body: JSON.stringify({
     model: <span class="code-string">"@cf/meta/llama-4-scout-17b-16e-instruct"</span>,
-    prompt: <span class="code-string">"Explain this diagram"</span>,
+    prompt: <span class="code-string">"Analyze the visual structure of this image"</span>,
     image: <span class="code-string">"data:image/png;base64,..."</span>
+  })
+})</div>
+        </div>
+
+        <div class="input-group" style="margin-top: 12px;">
+            <label>3. Web Search Retrieval</label>
+            <div class="code-block">
+<span class="code-keyword">fetch</span>(<span class="code-string">"https://crystal-api.baddampujithareddy19.workers.dev/"</span>, {
+  method: <span class="code-string">"POST"</span>,
+  headers: {
+    <span class="code-string">"X-Crystal-Key"</span>: <span class="code-string">"cry_live_your_key"</span>,
+    <span class="code-string">"Content-Type"</span>: <span class="code-string">"application/json"</span>
+  },
+  body: JSON.stringify({
+    model: <span class="code-string">"@cf/moonshot-ai/kimi-k2.7-code"</span>,
+    prompt: <span class="code-string">"Recent updates on space exploration"</span>,
+    web_search: <span class="code-keyword">true</span>
   })
 })</div>
         </div>
     </main>
 
-    <!-- PAGE 8: KEY MANAGER -->
+    <!-- TAB 8: KEY MANAGER -->
     <main id="tab-keys" class="tab-panel md-card">
         <div>
             <h2 class="title-medium">Access Key Manager</h2>
@@ -499,7 +597,7 @@
         </div>
         
         <div class="input-group">
-            <label>Admin Passphrase</label>
+            <label>Admin Secret</label>
             <input type="password" id="adminSecret" value="crystal_admin_2026">
         </div>
         
