@@ -2,199 +2,429 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crystal AI Studio | Free Multimodal Gateway</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Crystal AI Farting Station| Enterprise Gateway</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
     
     <style>
+        /* Material Design 3 - Full White Theme */
         :root {
-            --bg-canvas: #0f172a;
-            --bg-card: #1e293b;
-            --bg-subtle: #334155;
-            --border-color: #475569;
-            --brand-primary: #38bdf8;
-            --brand-hover: #0284c7;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --badge-free: #22c55e;
-            --radius-md: 12px;
-            --radius-lg: 16px;
+            --md-sys-color-background: #FFFFFF;
+            --md-sys-color-on-background: #1F1F1F;
+            --md-sys-color-surface: #FFFFFF;
+            --md-sys-color-surface-container: #F0F4F8;
+            --md-sys-color-surface-container-high: #E1E3E1;
+            --md-sys-color-outline: #747775;
+            --md-sys-color-outline-variant: #C4C7C5;
+            
+            --md-sys-color-primary: #0A56D0;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: #D3E3FD;
+            --md-sys-color-on-primary-container: #041E49;
+            
+            --md-sys-color-secondary-container: #E8DEF8;
+            --md-sys-color-on-secondary-container: #1D192B;
+            
+            --md-sys-color-tertiary-container: #C4EED0;
+            --md-sys-color-on-tertiary-container: #072711;
+
+            --radius-pill: 100px;
+            --radius-card: 24px;
+            --radius-input: 16px;
         }
 
         * { box-sizing: border-box; }
+
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-canvas);
-            color: var(--text-main);
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--md-sys-color-background);
+            color: var(--md-sys-color-on-background);
             margin: 0;
-            padding: 24px 16px;
+            padding: 16px;
             display: flex;
             justify-content: center;
             min-height: 100vh;
         }
 
-        .container { width: 100%; max-width: 850px; display: flex; flex-direction: column; gap: 20px; }
-        .app-header { display: flex; justify-content: space-between; align-items: center; }
-        .brand-title { font-size: 22px; font-weight: 700; color: var(--brand-primary); margin: 0; }
-        .brand-subtitle { font-size: 13px; color: var(--text-muted); }
-
-        .nav-container { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 4px; display: flex; gap: 4px; }
-        .nav-btn { flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 600; border-radius: 10px; cursor: pointer; }
-        .nav-btn.active { background: var(--bg-subtle); color: var(--brand-primary); }
-
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; }
-        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; }
+        .container { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 24px; }
         
-        .form-group { margin-bottom: 16px; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
+        /* Typography */
+        h1, h2, h3 { font-family: 'Google Sans', sans-serif; margin: 0; }
+        .title-large { font-size: 28px; font-weight: 400; }
+        .title-medium { font-size: 22px; font-weight: 400; }
+        .title-small { font-size: 16px; font-weight: 500; }
+        .body-medium { font-size: 14px; font-weight: 400; color: #444746; }
+
+        /* App Header */
+        .app-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 8px; }
+        .brand-logo { display: flex; align-items: center; gap: 12px; color: var(--md-sys-color-primary); }
+        .brand-logo .material-symbols-outlined { font-size: 32px; }
+
+        /* Navigation (MD3 Tabs) */
+        .nav-container { 
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+            scrollbar-width: none; /* Firefox */
+        }
+        .nav-container::-webkit-scrollbar { display: none; } /* Chrome */
         
-        input[type="text"], select, textarea {
-            width: 100%; padding: 11px 14px; background: var(--bg-canvas); border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; color: var(--text-main); outline: none; font-family: inherit;
+        .nav-chip {
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--radius-pill);
+            color: var(--md-sys-color-on-background);
+            font-family: 'Google Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+        }
+        
+        .nav-chip.active {
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            border-color: transparent;
         }
 
-        .checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-main); text-transform: none; cursor: pointer; margin-top: 8px; }
-        .checkbox-label input { width: 16px; height: 16px; }
+        .nav-chip .material-symbols-outlined { font-size: 18px; }
 
-        .btn { width: 100%; padding: 12px; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer; border: none; }
-        .btn-primary { background: var(--brand-primary); color: #0f172a; }
-        .btn-primary:hover { background: var(--brand-hover); }
+        /* Cards & Layout */
+        .tab-panel { display: none; animation: fadeIn 0.3s ease; }
+        .tab-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .output-box { margin-top: 16px; padding: 16px; background: var(--bg-canvas); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: 'JetBrains Mono', monospace; font-size: 12px; display: none; white-space: pre-wrap; word-break: break-word; }
-        .item-card { border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px; margin-bottom: 10px; background: var(--bg-canvas); }
-        .badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: #15803d; color: #dcfce7; text-transform: uppercase; }
+        .md-card {
+            background: var(--md-sys-color-surface);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--radius-card);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Inputs & Controls */
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .input-group label { font-size: 12px; font-weight: 500; color: var(--md-sys-color-outline); padding-left: 4px; }
+        
+        input[type="text"], input[type="password"], select, textarea {
+            width: 100%;
+            padding: 16px;
+            background: var(--md-sys-color-surface);
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: var(--radius-input);
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            color: var(--md-sys-color-on-background);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--md-sys-color-primary);
+            box-shadow: 0 0 0 1px var(--md-sys-color-primary);
+        }
+
+        .checkbox-container {
+            display: inline-flex; align-items: center; gap: 12px;
+            cursor: pointer; padding: 8px 4px;
+            font-size: 14px; font-weight: 500;
+        }
+        .checkbox-container input { width: 20px; height: 20px; accent-color: var(--md-sys-color-primary); }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 24px;
+            border-radius: var(--radius-pill);
+            font-family: 'Google Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+        }
+        .btn-filled { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+        .btn-filled:hover { background: #0842A0; }
+        .btn-tonal { background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-background); }
+
+        /* Logs & Data Items */
+        .list-item {
+            display: flex; align-items: flex-start; gap: 16px;
+            padding: 16px;
+            border-radius: 16px;
+            background: var(--md-sys-color-surface-container);
+            margin-bottom: 8px;
+        }
+        .list-icon {
+            display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-primary);
+        }
+        .list-content { flex: 1; }
+        .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .list-title { font-weight: 500; font-size: 14px; }
+        .list-meta { font-size: 12px; color: var(--md-sys-color-outline); }
+        .list-body { font-size: 13px; color: #444746; line-height: 1.4; word-break: break-word; }
+
+        /* Badges */
+        .badge {
+            padding: 4px 10px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 500;
+        }
+        .badge-vision { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+        .badge-web { background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container); }
+        .badge-free { background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-background); }
+
+        /* Outputs & Code Blocks */
+        .output-box {
+            background: var(--md-sys-color-surface-container);
+            border-radius: var(--radius-input);
+            padding: 16px; font-family: monospace; font-size: 13px;
+            white-space: pre-wrap; word-break: break-word;
+            display: none;
+        }
+        
+        .code-block {
+            background: #1E1E1E; color: #D4D4D4;
+            padding: 16px; border-radius: var(--radius-input);
+            font-family: monospace; font-size: 12px;
+            overflow-x: auto; margin-top: 8px;
+        }
+        .code-keyword { color: #569CD6; }
+        .code-string { color: #CE9178; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="app-header">
-        <div>
-            <h1 class="brand-title">Crystal AI Studio</h1>
-            <div class="brand-subtitle">Free Vision, Real-Time Web Search & DALL-E 3 Gateway</div>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="brand-logo">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            <div>
+                <h1 class="title-medium">Crystal AI</h1>
+                <div class="body-medium">Unified Intelligence Gateway</div>
+            </div>
         </div>
-    </div>
+    </header>
 
-    <div class="nav-container">
-        <button class="nav-btn active" onclick="switchTab('tester', event)">⚡ Studio</button>
-        <button class="nav-btn" onclick="switchTab('catalog', event)">🤖 Models</button>
-        <button class="nav-btn" onclick="switchTab('requests', event)">📊 Logs</button>
-        <button class="nav-btn" onclick="switchTab('keys', event)">🔑 Key Generator</button>
-    </div>
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <button class="nav-chip active" onclick="switchTab('studio')">
+            <span class="material-symbols-outlined">edit_square</span> Studio
+        </button>
+        <button class="nav-chip" onclick="switchTab('catalog')">
+            <span class="material-symbols-outlined">view_cozy</span> Models
+        </button>
+        <button class="nav-chip" onclick="switchTab('logs')">
+            <span class="material-symbols-outlined">receipt_long</span> Logs
+        </button>
+        <button class="nav-chip" onclick="switchTab('docs')">
+            <span class="material-symbols-outlined">menu_book</span> Docs
+        </button>
+        <button class="nav-chip" onclick="switchTab('keys')">
+            <span class="material-symbols-outlined">vpn_key</span> Keys
+        </button>
+    </nav>
 
     <!-- TAB 1: STUDIO -->
-    <div id="tab-tester" class="tab-panel active">
-        <div class="card">
-            <div class="form-group">
-                <label>Select Model Architecture</label>
-                <select id="testModel">
-                    <optgroup label="🎨 Image Generation (Free)">
-                        <option value="dall-e-3" selected>DALL-E 3 High Precision (Free Proxy Endpoint)</option>
-                        <option value="@cf/black-forest-labs/flux-1-schnell">FLUX.1 Schnell (4-Step Fast)</option>
-                        <option value="@cf/stabilityai/stable-diffusion-xl-base-1.0">Stable Diffusion XL 1.0</option>
-                    </optgroup>
-                    <optgroup label="👁️ Vision & Essay Models (Free)">
-                        <option value="@cf/meta/llama-4-scout-17b-16e-instruct">Llama 4 Scout (Vision + Multimodal MoE)</option>
-                        <option value="@cf/google/gemma-3-26b-it">Google Gemma 3 (Vision + Structured Essays)</option>
-                        <option value="@cf/mistralai/mistral-small-3.1-24b-instruct">Mistral Small 3.1 (Vision + Long Context)</option>
-                    </optgroup>
-                    <optgroup label="🌐 Live Web Search & Agent Models (Free)">
-                        <option value="@cf/moonshot-ai/kimi-k2.7-code">Kimi K2.7 (Agentic Web Search & Tool Calling)</option>
-                        <option value="@cf/zhipu-ai/glm-4.7-flash">GLM-4.7 Flash (131k Context Web Retrieval)</option>
-                        <option value="@cf/openai/gpt-oss-120b">GPT-OSS 120B (Advanced Reasoning & Research)</option>
-                    </optgroup>
-                </select>
-            </div>
-
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Crystal API Key</label>
-                    <input type="text" id="testApiKey" placeholder="cry_live_...">
-                </div>
-                <div class="form-group">
-                    <label>Vision Input (Optional Image Base64 / URL)</label>
-                    <input type="text" id="imageInput" placeholder="data:image/jpeg;base64,...">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Prompt / Essay Requirement</label>
-                <textarea id="testPrompt" rows="4">Write an in-depth analytical essay discussing the architectural differences between open-weights MoE models and standard transformer models.</textarea>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="webSearchCheck"> Enable Live Edge Web Search Integration
-                </label>
-            </div>
-
-            <button class="btn btn-primary" onclick="runExecution()">Generate Output</button>
-            <div id="testResult" class="output-box"></div>
+    <main id="tab-studio" class="tab-panel active md-card">
+        <div>
+            <h2 class="title-medium">Playground</h2>
+            <p class="body-medium">Test vision, agentic, and image models.</p>
         </div>
-    </div>
+
+        <div class="input-group">
+            <label>Model Architecture</label>
+            <select id="testModel">
+                <optgroup label="🎨 Image Generation">
+                    <option value="dall-e-3">DALL-E 3 (High Precision Proxy)</option>
+                    <option value="@cf/black-forest-labs/flux-1-schnell">FLUX.1 Schnell</option>
+                </optgroup>
+                <optgroup label="👁️ Vision & Essay Models">
+                    <option value="@cf/meta/llama-4-scout-17b-16e-instruct" selected>Llama 4 Scout (Vision + Multimodal MoE)</option>
+                    <option value="@cf/google/gemma-3-26b-it">Google Gemma 3 (Vision + Structured Essays)</option>
+                    <option value="@cf/mistralai/mistral-small-3.1-24b-instruct">Mistral Small 3.1 (Vision + Long Context)</option>
+                </optgroup>
+                <optgroup label="🌐 Live Web Search & Agents">
+                    <option value="@cf/moonshot-ai/kimi-k2.7-code">Kimi K2.7 (Agentic Web Search & Tool Calling)</option>
+                    <option value="@cf/zhipu-ai/glm-4.7-flash">GLM-4.7 Flash (131k Context Web Retrieval)</option>
+                    <option value="@cf/openai/gpt-oss-120b">GPT-OSS 120B (Advanced Reasoning)</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="input-group">
+                <label>Crystal API Key</label>
+                <input type="text" id="testApiKey" placeholder="cry_live_...">
+            </div>
+            <div class="input-group">
+                <label>Vision Image Input (Base64 / URL)</label>
+                <input type="text" id="imageInput" placeholder="Optional for Vision Models">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>System Prompt / Instruction</label>
+            <textarea id="testPrompt" rows="4">Analyze the architectural paradigm shift from monolithic transformers to MoE (Mixture of Experts).</textarea>
+            
+            <label class="checkbox-container">
+                <input type="checkbox" id="webSearchCheck">
+                Enable DuckDuckGo Live Web Search Injection
+            </label>
+        </div>
+
+        <button class="btn btn-filled" onclick="runExecution()">
+            <span class="material-symbols-outlined">send</span> Execute Generation
+        </button>
+        <div id="testResult" class="output-box"></div>
+    </main>
 
     <!-- TAB 2: CATALOG -->
-    <div id="tab-catalog" class="tab-panel">
-        <div class="card">
-            <h3>Supported Top-Tier Features</h3>
-            <div class="item-card">
-                <div style="display:flex; justify-space-between; align-items:center;">
-                    <strong>dall-e-3</strong>
-                    <span class="badge">100% FREE</span>
+    <main id="tab-catalog" class="tab-panel md-card">
+        <div>
+            <h2 class="title-medium">Model Catalog</h2>
+            <p class="body-medium">Supported architectures and capabilities.</p>
+        </div>
+
+        <div class="list-item" style="background:var(--md-sys-color-surface); border:1px solid var(--md-sys-color-outline-variant);">
+            <div class="list-content">
+                <div class="list-header">
+                    <span class="list-title">Meta Llama 4 Scout (17B)</span>
+                    <span class="badge badge-vision">Vision + Text</span>
                 </div>
-                <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Proxy image generation backend bypassing paid API limits.</p>
-            </div>
-            <div class="item-card">
-                <div style="display:flex; justify-space-between; align-items:center;">
-                    <strong>@cf/meta/llama-4-scout-17b-16e-instruct</strong>
-                    <span class="badge">VISION + ESSAYS</span>
-                </div>
-                <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Native multimodal mixture-of-experts model optimized for image understanding and complex essays.</p>
-            </div>
-            <div class="item-card">
-                <div style="display:flex; justify-space-between; align-items:center;">
-                    <strong>@cf/moonshot-ai/kimi-k2.7-code</strong>
-                    <span class="badge">WEB SEARCH</span>
-                </div>
-                <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Frontier-scale agentic tool calling and live web search parsing model.</p>
+                <div class="list-body">Native multimodal mixture-of-experts model optimized for image understanding, OCR, and complex analytical essays.</div>
             </div>
         </div>
-    </div>
+
+        <div class="list-item" style="background:var(--md-sys-color-surface); border:1px solid var(--md-sys-color-outline-variant);">
+            <div class="list-content">
+                <div class="list-header">
+                    <span class="list-title">Google Gemma 3 (26B)</span>
+                    <span class="badge badge-vision">Vision + Essay</span>
+                </div>
+                <div class="list-body">Google's latest open-weights model bridging PaLM-level reasoning with native image ingestion capabilities.</div>
+            </div>
+        </div>
+
+        <div class="list-item" style="background:var(--md-sys-color-surface); border:1px solid var(--md-sys-color-outline-variant);">
+            <div class="list-content">
+                <div class="list-header">
+                    <span class="list-title">Mistral Small 3.1</span>
+                    <span class="badge badge-vision">Vision + Context</span>
+                </div>
+                <div class="list-body">High-efficiency French model supporting extended context windows and structured JSON/Base64 image parsing.</div>
+            </div>
+        </div>
+
+        <div class="list-item" style="background:var(--md-sys-color-surface); border:1px solid var(--md-sys-color-outline-variant);">
+            <div class="list-content">
+                <div class="list-header">
+                    <span class="list-title">Kimi K2.7 & GLM 4.7 Flash</span>
+                    <span class="badge badge-web">Web Search + Agent</span>
+                </div>
+                <div class="list-body">Frontier-scale models inherently designed for multi-turn tool calling, live data retrieval, and real-time synthesis.</div>
+            </div>
+        </div>
+    </main>
 
     <!-- TAB 3: LOGS -->
-    <div id="tab-requests" class="tab-panel">
-        <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3>Execution Telemetry</h3>
-                <button class="btn" style="width:auto; padding:6px 12px; background:var(--bg-subtle); color:var(--text-main);" onclick="fetchLogs()">Refresh</button>
+    <main id="tab-logs" class="tab-panel md-card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 class="title-medium">Execution Logs</h2>
+                <p class="body-medium">Real-time edge telemetry.</p>
             </div>
-            <div id="logsContainer"><p style="font-size:13px; color:var(--text-muted);">Loading logs...</p></div>
+            <button class="btn btn-tonal" onclick="fetchLogs()">
+                <span class="material-symbols-outlined">refresh</span>
+            </button>
         </div>
-    </div>
 
-    <!-- TAB 4: KEYS -->
-    <div id="tab-keys" class="tab-panel">
-        <div class="card">
-            <h3>Key Generator</h3>
-            <div class="form-group">
-                <label>Admin Secret</label>
-                <input type="password" id="adminSecret" value="crystal_admin_2026">
-            </div>
-            <button class="btn btn-primary" onclick="generateKey()">Generate Free Key</button>
-            <div id="keyResult" class="output-box"></div>
+        <div id="logsContainer">
+            <p class="body-medium" style="text-align:center; padding: 20px;">Fetching logs...</p>
         </div>
-    </div>
+    </main>
+
+    <!-- TAB 4: DOCS -->
+    <main id="tab-docs" class="tab-panel md-card">
+        <div>
+            <h2 class="title-medium">API Documentation</h2>
+            <p class="body-medium">How to implement Vision, Search, and Image models via HTTP.</p>
+        </div>
+
+        <div class="input-group">
+            <label>1. Standard / Web Search Generation</label>
+            <div class="code-block">
+<span class="code-keyword">fetch</span>(<span class="code-string">"https://crystal-api...workers.dev/"</span>, {
+  method: <span class="code-string">"POST"</span>,
+  headers: {
+    <span class="code-string">"X-Crystal-Key"</span>: <span class="code-string">"cry_live_your_key"</span>,
+    <span class="code-string">"Content-Type"</span>: <span class="code-string">"application/json"</span>
+  },
+  body: JSON.stringify({
+    model: <span class="code-string">"@cf/moonshot-ai/kimi-k2.7-code"</span>,
+    prompt: <span class="code-string">"What is the current stock price of Apple?"</span>,
+    web_search: <span class="code-keyword">true</span> <span class="code-keyword">// Injects DuckDuckGo search results</span>
+  })
+})</div>
+        </div>
+
+        <div class="input-group" style="margin-top: 16px;">
+            <label>2. Multimodal Vision Request</label>
+            <div class="code-block">
+<span class="code-keyword">fetch</span>(<span class="code-string">"https://crystal-api...workers.dev/"</span>, {
+  method: <span class="code-string">"POST"</span>,
+  headers: {
+    <span class="code-string">"X-Crystal-Key"</span>: <span class="code-string">"cry_live_your_key"</span>,
+    <span class="code-string">"Content-Type"</span>: <span class="code-string">"application/json"</span>
+  },
+  body: JSON.stringify({
+    model: <span class="code-string">"@cf/meta/llama-4-scout-17b-16e-instruct"</span>,
+    prompt: <span class="code-string">"Describe the contents of this image in detail."</span>,
+    image: <span class="code-string">"data:image/jpeg;base64,/9j/4AAQSkZJRg..."</span>
+  })
+})</div>
+        </div>
+    </main>
+
+    <!-- TAB 5: KEYS -->
+    <main id="tab-keys" class="tab-panel md-card">
+        <div>
+            <h2 class="title-medium">Access Manager</h2>
+            <p class="body-medium">Generate persistent authentication keys.</p>
+        </div>
+        
+        <div class="input-group">
+            <label>Admin Secret Passphrase</label>
+            <input type="password" id="adminSecret" value="crystal_admin_2026">
+        </div>
+        
+        <button class="btn btn-filled" onclick="generateKey()">
+            <span class="material-symbols-outlined">add_circle</span> Create API Key
+        </button>
+        <div id="keyResult" class="output-box"></div>
+    </main>
 </div>
 
 <script>
     const API_BASE_URL = "https://crystal-api.baddampujithareddy19.workers.dev";
 
-    function switchTab(tabId, evt) {
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    function switchTab(tabId) {
+        document.querySelectorAll('.nav-chip').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        evt.target.classList.add('active');
+        
+        event.currentTarget.classList.add('active');
         document.getElementById(`tab-${tabId}`).classList.add('active');
-        if(tabId === 'requests') fetchLogs();
+        
+        if(tabId === 'logs') fetchLogs();
     }
 
     async function runExecution() {
@@ -205,10 +435,10 @@
         const webSearch = document.getElementById("webSearchCheck").checked;
         const out = document.getElementById("testResult");
 
-        if(!apiKey) return alert("Enter your Crystal API Key.");
+        if(!apiKey) return alert("API Key is required.");
 
         out.style.display = "block";
-        out.innerHTML = `Running task via ${model}...`;
+        out.innerHTML = `Running task...`;
 
         try {
             const res = await fetch(`${API_BASE_URL}/`, {
@@ -220,7 +450,7 @@
             const data = await res.json();
             if(data.status === "success") {
                 if(data.type === "image") {
-                    out.innerHTML = `<strong>[Model]:</strong> ${data.model_used}<br><img src="${data.result}" style="width:100%; max-width:450px; border-radius:12px; margin-top:10px;"/>`;
+                    out.innerHTML = `<strong>[Model]:</strong> ${data.model_used}<br><img src="${data.result}" style="width:100%; border-radius:16px; margin-top:12px;"/>`;
                 } else {
                     out.innerText = `[Model]: ${data.model_used}\n[Latency]: ${data.verification?.gpu_execution_latency}\n\n${data.result}`;
                 }
@@ -234,24 +464,36 @@
 
     async function fetchLogs() {
         const container = document.getElementById("logsContainer");
+        container.innerHTML = `<p class="body-medium" style="text-align:center;">Fetching...</p>`;
+        
         try {
             const res = await fetch(`${API_BASE_URL}/v1/requests`);
             const data = await res.json();
             if(data.requests && data.requests.length > 0) {
                 container.innerHTML = data.requests.map(r => `
-                    <div class="item-card">
-                        <strong>${r.model}</strong> (${r.latency})
-                        <p style="margin:4px 0 0 0; color:var(--text-muted); font-size:12px;">Prompt: ${r.prompt}</p>
+                    <div class="list-item">
+                        <div class="list-icon">
+                            <span class="material-symbols-outlined">${r.type === 'image' ? 'image' : 'chat'}</span>
+                        </div>
+                        <div class="list-content">
+                            <div class="list-header">
+                                <span class="list-title">${r.model}</span>
+                                <span class="badge badge-free">${r.latency}</span>
+                            </div>
+                            <div class="list-body">"${r.prompt}"</div>
+                            <div class="list-meta" style="margin-top:4px;">${r.timestamp} • ${r.country || 'N/A'} • RAY: ${r.cfRay}</div>
+                        </div>
                     </div>
                 `).join('');
-            } else { container.innerHTML = `<p style="font-size:13px;">No logs recorded.</p>`; }
-        } catch(e) { container.innerHTML = `<p style="font-size:13px; color:red;">Log retrieval failed.</p>`; }
+            } else { container.innerHTML = `<p class="body-medium" style="text-align:center;">No logs recorded.</p>`; }
+        } catch(e) { container.innerHTML = `<p class="body-medium" style="text-align:center; color:red;">Failed to load logs.</p>`; }
     }
 
     async function generateKey() {
         const secret = document.getElementById("adminSecret").value;
         const out = document.getElementById("keyResult");
         out.style.display = "block";
+        out.innerHTML = "Generating...";
         try {
             const res = await fetch(`${API_BASE_URL}/v1/create-key`, { method: "POST", headers: { "X-Admin-Secret": secret } });
             const data = await res.json();
