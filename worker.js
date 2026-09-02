@@ -25,7 +25,7 @@ export default {
       const array = new Uint8Array(16);
       crypto.getRandomValues(array);
       const rawApiKey = `cry_live_${Array.from(array).map(b => b.toString(16).padStart(2, "0")).join("")}`;
-
+      
       const encoder = new TextEncoder();
       const hashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(rawApiKey));
       const keyHash = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
@@ -42,7 +42,7 @@ export default {
       });
     }
 
-    // 2. Admin Endpoint: Telemetry Logs
+    // 2. Admin Endpoint: Activity Logs
     if (url.pathname === "/v1/requests") {
       const logsRaw = await env.CRYSTAL_KEYS.get("GLOBAL_REQUEST_LOGS");
       const logs = logsRaw ? JSON.parse(logsRaw) : [];
@@ -55,7 +55,7 @@ export default {
     // 3. Authenticate Crystal API Key
     const apiKey = (request.headers.get("X-Crystal-Key") || "").trim();
     if (!apiKey.startsWith("cry_live_")) {
-      return new Response(JSON.stringify({ error: "Invalid API key format. Use X-Crystal-Key header." }), {
+      return new Response(JSON.stringify({ error: "Invalid key format. Use X-Crystal-Key header." }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -74,13 +74,13 @@ export default {
       });
     }
 
-    // 4. Parse Request Payload
+    // 4. Parse Request
     let userPrompt = "Hello!";
     let imageBase64 = null;
     let webSearchEnabled = false;
     let maxTokens = 4096;
     let temperature = 0.6;
-    let model = "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b";
+    let model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
     if (request.method === "POST") {
       try {
@@ -105,7 +105,7 @@ export default {
     const isDalle3 = model === "dall-e-3";
     const isImageModel = isDalle3 || cfImageModels.includes(model);
 
-    // 5. Build Dynamic 2026 Live Timeline Anchor
+    // 5. Current 2026 Timeline Context
     const now = new Date();
     const liveDateStr = now.toLocaleDateString("en-US", {
       weekday: "long",
@@ -121,13 +121,11 @@ export default {
       let finalResult = "";
 
       if (isDalle3) {
-        // High-Precision Free DALL-E 3 Proxy
         const encodedPrompt = encodeURIComponent(userPrompt);
         const seed = Math.floor(Math.random() * 999999);
         finalResult = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=dalle-3&seed=${seed}&nologo=true`;
 
       } else if (isImageModel) {
-        // Free Cloudflare Edge Image Generation
         const imageStream = await env.AI.run(model, { prompt: userPrompt });
         const arrayBuffer = await new Response(imageStream).arrayBuffer();
         let binary = "";
@@ -138,49 +136,50 @@ export default {
         finalResult = `data:image/png;base64,${btoa(binary)}`;
 
       } else {
-        // 7. Live Edge Web Search Integration
-        let webSearchData = "";
-        const needsSearch = webSearchEnabled || model.includes("kimi") || model.includes("glm") || /latest|today|current|news|who is|recent|price/i.test(userPrompt);
+        // 7. Unblocked Live Knowledge Retrieval (Wikipedia Open API)
+        let liveSearchData = "";
+        const needsSearch = webSearchEnabled || 
+                            model.includes("kimi") || 
+                            model.includes("glm") || 
+                            /latest|iphone|phone|current|today|year|news|release|who is/i.test(userPrompt);
 
         if (needsSearch) {
           try {
-            const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(userPrompt)}`;
-            const searchRes = await fetch(searchUrl, {
-              headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-              }
+            // Clean prompt down to raw search keywords
+            const cleanQuery = userPrompt.replace(/what is the|who is the|tell me about|how much is/gi, "").trim();
+            const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQuery)}&utf8=&format=json&origin=*`;
+            
+            const wikiRes = await fetch(wikiUrl, {
+              headers: { "User-Agent": "CrystalAI/2.0 (developer@crystal.internal)" }
             });
-            const html = await searchRes.text();
-            const matches = [...html.matchAll(/<a class="result__snippet[^>]*>(.*?)<\/a>/g)]
-              .map(m => m[1].replace(/<[^>]+>/g, "").trim())
-              .filter(Boolean);
 
-            if (matches.length > 0) {
-              webSearchData = `\n\n[VERIFIED LIVE WEB SEARCH RESULTS (${liveDateStr})]:\n${matches.slice(0, 5).map((m, i) => `${i + 1}. ${m}`).join("\n")}`;
+            if (wikiRes.ok) {
+              const wikiJson = await wikiRes.json();
+              const snippets = (wikiJson.query?.search || []).slice(0, 4).map(item => {
+                const text = item.snippet.replace(/<[^>]+>/g, "").trim();
+                return `• ${item.title}: ${text}`;
+              });
+
+              if (snippets.length > 0) {
+                liveSearchData = `\n\n[VERIFIED LIVE ENCYCLOPEDIC GROUND TRUTH DATA]:\n${snippets.join("\n")}`;
+              }
             }
           } catch (err) {}
         }
 
-        // 8. Advanced Frontier System Persona with Strict 2026 Anchoring
-        const liveSystemPrompt = `You are Crystal AI, a frontier-class analytical intelligence engine.
+        // 8. Strict 2026 Anchor Instructions
+        const systemInstruction = `You are Crystal AI, a frontier-class intelligence engine.
 TIMELINE ANCHOR:
 - Current Reality Date: ${liveDateStr}.
 - Current Year: ${liveYear}.
-- You are operating actively on the live ${liveYear} timeline.
-- NEVER state that your knowledge cuts off in 2023 or 2024. Never refer to ${liveYear} as "the future."
-- Evaluate facts, technology, and real-world events from the present reality of ${liveYear}.
-- If live web data is provided below, treat it as ground truth and synthesize it directly.
-
-BEHAVIORAL DIRECTIVES:
-- Provide direct, rigorous, and logically sound responses.
-- Minimize conversational filler and avoid stating meta-announcements.
-- Use clean Markdown, bold headers, and structured tables or bullet points where appropriate.${webSearchData}`;
+- You operate on the live ${liveYear} timeline.
+- Never state that your knowledge cuts off in 2023 or 2024.
+- If live data is provided below, treat it as ground truth.${liveSearchData}`;
 
         let messagesPayload = [];
         if (imageBase64) {
           messagesPayload = [
-            { role: "system", content: liveSystemPrompt },
+            { role: "system", content: systemInstruction },
             {
               role: "user",
               content: [
@@ -191,7 +190,7 @@ BEHAVIORAL DIRECTIVES:
           ];
         } else {
           messagesPayload = [
-            { role: "system", content: liveSystemPrompt },
+            { role: "system", content: systemInstruction },
             { role: "user", content: userPrompt }
           ];
         }
@@ -210,7 +209,6 @@ BEHAVIORAL DIRECTIVES:
       const datacenterColo = request.cf?.colo || "UNKNOWN";
       const clientCountry = request.cf?.country || request.headers.get("cf-ipcountry") || "XX";
 
-      // 9. Asynchronously Save Request to Activity Log
       const logItem = {
         timestamp: new Date().toLocaleTimeString(),
         model: model,
@@ -234,10 +232,7 @@ BEHAVIORAL DIRECTIVES:
         status: "success",
         type: isImageModel ? "image" : "text",
         model_used: model,
-        timeline: {
-          anchor_date: liveDateStr,
-          anchor_year: liveYear
-        },
+        timeline: { anchor_date: liveDateStr, anchor_year: liveYear },
         verification: {
           authentic_cf_ray: cfRay,
           datacenter_colo: datacenterColo,
@@ -260,3 +255,4 @@ BEHAVIORAL DIRECTIVES:
     }
   }
 };
+
