@@ -17,31 +17,48 @@ export default {
     if (url.pathname === "/v1/create-key") {
       const adminSecret = request.headers.get("X-Admin-Secret");
       if (adminSecret !== "crystal_admin_2026") {
-        return new Response(JSON.stringify({ error: "Unauthorized Admin" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ error: "Unauthorized Admin" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
       }
       const array = new Uint8Array(16);
       crypto.getRandomValues(array);
       const rawApiKey = `cry_live_${Array.from(array).map(b => b.toString(16).padStart(2, "0")).join("")}`;
-      
+
       const encoder = new TextEncoder();
       const hashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(rawApiKey));
       const keyHash = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
 
-      await env.CRYSTAL_KEYS.put(keyHash, JSON.stringify({ user: "App_User", active: true, created_at: new Date().toISOString() }));
-      return new Response(JSON.stringify({ status: "success", api_key: rawApiKey }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      await env.CRYSTAL_KEYS.put(keyHash, JSON.stringify({
+        user: "App_User",
+        active: true,
+        created_at: new Date().toISOString()
+      }));
+
+      return new Response(JSON.stringify({ status: "success", api_key: rawApiKey }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
     }
 
-    // 2. Admin Endpoint: Activity Logs
+    // 2. Admin Endpoint: Telemetry Logs
     if (url.pathname === "/v1/requests") {
       const logsRaw = await env.CRYSTAL_KEYS.get("GLOBAL_REQUEST_LOGS");
       const logs = logsRaw ? JSON.parse(logsRaw) : [];
-      return new Response(JSON.stringify({ status: "success", requests: logs }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ status: "success", requests: logs }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
     }
 
     // 3. Authenticate Crystal API Key
     const apiKey = (request.headers.get("X-Crystal-Key") || "").trim();
     if (!apiKey.startsWith("cry_live_")) {
-      return new Response(JSON.stringify({ error: "Invalid key format." }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "Invalid API key format. Use X-Crystal-Key header." }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
     }
 
     try {
@@ -51,16 +68,19 @@ export default {
       const keyData = await env.CRYSTAL_KEYS.get(keyHash, { type: "json" });
       if (!keyData || !keyData.active) throw new Error();
     } catch (e) {
-      return new Response(JSON.stringify({ error: "Invalid or revoked API key." }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "Invalid or revoked API key." }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
     }
 
     // 4. Parse Request Payload
-    let userPrompt = "Write an analytical essay on artificial intelligence.";
+    let userPrompt = "Hello!";
     let imageBase64 = null;
     let webSearchEnabled = false;
     let maxTokens = 4096;
-    let temperature = 0.7;
-    let model = "@cf/meta/llama-4-scout-17b-16e-instruct";
+    let temperature = 0.6;
+    let model = "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b";
 
     if (request.method === "POST") {
       try {
@@ -74,7 +94,6 @@ export default {
       } catch (e) {}
     }
 
-    // Synchronized Image Models Array
     const cfImageModels = [
       "@cf/black-forest-labs/flux-1-schnell",
       "@cf/stabilityai/stable-diffusion-xl-base-1.0",
@@ -86,18 +105,29 @@ export default {
     const isDalle3 = model === "dall-e-3";
     const isImageModel = isDalle3 || cfImageModels.includes(model);
 
-    // 5. Execution Pipeline
+    // 5. Build Dynamic 2026 Live Timeline Anchor
+    const now = new Date();
+    const liveDateStr = now.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC"
+    });
+    const liveYear = now.getUTCFullYear();
+
+    // 6. Execution Pipeline
     try {
       let finalResult = "";
 
       if (isDalle3) {
-        // Free DALL-E 3 Proxy Gateway
+        // High-Precision Free DALL-E 3 Proxy
         const encodedPrompt = encodeURIComponent(userPrompt);
         const seed = Math.floor(Math.random() * 999999);
         finalResult = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=dalle-3&seed=${seed}&nologo=true`;
 
       } else if (isImageModel) {
-        // Edge Image Generation
+        // Free Cloudflare Edge Image Generation
         const imageStream = await env.AI.run(model, { prompt: userPrompt });
         const arrayBuffer = await new Response(imageStream).arrayBuffer();
         let binary = "";
@@ -108,37 +138,61 @@ export default {
         finalResult = `data:image/png;base64,${btoa(binary)}`;
 
       } else {
-        // Text, Vision & Web Search Models Execution
-        let userContent = userPrompt;
+        // 7. Live Edge Web Search Integration
+        let webSearchData = "";
+        const needsSearch = webSearchEnabled || model.includes("kimi") || model.includes("glm") || /latest|today|current|news|who is|recent|price/i.test(userPrompt);
 
-        if (webSearchEnabled || model.includes("kimi") || model.includes("glm")) {
+        if (needsSearch) {
           try {
-            const searchRes = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(userPrompt)}`);
-            const htmlText = await searchRes.text();
-            const snippets = htmlText.match(/<a class="result__snippet[^>]*>(.*?)<\/a>/g) || [];
-            const parsedContext = snippets.slice(0, 3).map(s => s.replace(/<[^>]+>/g, '')).join("\n---\n");
-            
-            if (parsedContext) {
-              userContent = `[Web Search Context Source Data]:\n${parsedContext}\n\n[User Goal]: ${userPrompt}`;
+            const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(userPrompt)}`;
+            const searchRes = await fetch(searchUrl, {
+              headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+              }
+            });
+            const html = await searchRes.text();
+            const matches = [...html.matchAll(/<a class="result__snippet[^>]*>(.*?)<\/a>/g)]
+              .map(m => m[1].replace(/<[^>]+>/g, "").trim())
+              .filter(Boolean);
+
+            if (matches.length > 0) {
+              webSearchData = `\n\n[VERIFIED LIVE WEB SEARCH RESULTS (${liveDateStr})]:\n${matches.slice(0, 5).map((m, i) => `${i + 1}. ${m}`).join("\n")}`;
             }
-          } catch(err) {}
+          } catch (err) {}
         }
+
+        // 8. Advanced Frontier System Persona with Strict 2026 Anchoring
+        const liveSystemPrompt = `You are Crystal AI, a frontier-class analytical intelligence engine.
+TIMELINE ANCHOR:
+- Current Reality Date: ${liveDateStr}.
+- Current Year: ${liveYear}.
+- You are operating actively on the live ${liveYear} timeline.
+- NEVER state that your knowledge cuts off in 2023 or 2024. Never refer to ${liveYear} as "the future."
+- Evaluate facts, technology, and real-world events from the present reality of ${liveYear}.
+- If live web data is provided below, treat it as ground truth and synthesize it directly.
+
+BEHAVIORAL DIRECTIVES:
+- Provide direct, rigorous, and logically sound responses.
+- Minimize conversational filler and avoid stating meta-announcements.
+- Use clean Markdown, bold headers, and structured tables or bullet points where appropriate.${webSearchData}`;
 
         let messagesPayload = [];
         if (imageBase64) {
           messagesPayload = [
+            { role: "system", content: liveSystemPrompt },
             {
               role: "user",
               content: [
-                { type: "text", text: userContent },
+                { type: "text", text: userPrompt },
                 { type: "image_url", image_url: { url: imageBase64 } }
               ]
             }
           ];
         } else {
           messagesPayload = [
-            { role: "system", content: "You are Crystal AI, an advanced research, essay writing, and analytical assistant." },
-            { role: "user", content: userContent }
+            { role: "system", content: liveSystemPrompt },
+            { role: "user", content: userPrompt }
           ];
         }
 
@@ -156,6 +210,7 @@ export default {
       const datacenterColo = request.cf?.colo || "UNKNOWN";
       const clientCountry = request.cf?.country || request.headers.get("cf-ipcountry") || "XX";
 
+      // 9. Asynchronously Save Request to Activity Log
       const logItem = {
         timestamp: new Date().toLocaleTimeString(),
         model: model,
@@ -179,16 +234,29 @@ export default {
         status: "success",
         type: isImageModel ? "image" : "text",
         model_used: model,
+        timeline: {
+          anchor_date: liveDateStr,
+          anchor_year: liveYear
+        },
         verification: {
           authentic_cf_ray: cfRay,
           datacenter_colo: datacenterColo,
           gpu_execution_latency: `${duration}ms`
         },
         result: finalResult
-      }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
 
     } catch (error) {
-      return new Response(JSON.stringify({ error: "AI Engine Failed", details: error.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({
+        error: "AI Engine Execution Failed",
+        details: error.message
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
     }
   }
 };
