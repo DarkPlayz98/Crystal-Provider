@@ -1,739 +1,612 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crystal AI | Enterprise Gateway</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
-    
-    <style>
-        :root {
-            --md-sys-color-background: #FFFFFF;
-            --md-sys-color-on-background: #1F1F1F;
-            --md-sys-color-surface: #FFFFFF;
-            --md-sys-color-surface-container: #F0F4F8;
-            --md-sys-color-surface-container-high: #E1E3E1;
-            --md-sys-color-outline: #747775;
-            --md-sys-color-outline-variant: #C4C7C5;
-            
-            --md-sys-color-primary: #0A56D0;
-            --md-sys-color-on-primary: #FFFFFF;
-            --md-sys-color-primary-container: #D3E3FD;
-            --md-sys-color-on-primary-container: #041E49;
-            
-            --md-sys-color-secondary-container: #E8DEF8;
-            --md-sys-color-on-secondary-container: #1D192B;
-            
-            --md-sys-color-tertiary-container: #C4EED0;
-            --md-sys-color-on-tertiary-container: #072711;
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crystal Provider · One key for every language model</title>
+<meta name="description" content="Crystal Provider serves multiple AI language models through one API, running on Cloudflare's edge network.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>💎</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#06181d; --deep:#0b262d; --line:#1a4048; --ice:#e8fbff; --mist:#8fb3ba;
+  --teal:#5eead4; --violet:#a78bfa; --accent:#5eead4; --rose:#f43f5e;
+  --display:'Sora',system-ui,sans-serif; --body:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--ice);font:400 17px/1.6 var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
 
-            --radius-pill: 100px;
-            --radius-card: 24px;
-            --radius-input: 16px;
-        }
+/* Header */
+header{position:fixed;inset:0 0 auto 0;z-index:50;background:rgba(6,24,29,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(26,64,72,0.4)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{display:flex;align-items:center;gap:10px;font:600 19px var(--display);text-decoration:none;letter-spacing:-.01em}
+nav{display:flex;gap:24px;align-items:center;font-size:15px}
+nav a{text-decoration:none;color:var(--mist);transition:color .2s}
+nav a:hover{color:var(--ice)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:999px;font:500 15px var(--body);text-decoration:none;border:1px solid var(--line);cursor:pointer;transition:transform .2s,background .2s,border-color .2s}
+.btn.primary{background:var(--teal);color:#032a26;border-color:var(--teal);font-weight:600}
+.btn:hover{transform:translateY(-2px)}
+.btn.ghost:hover{background:var(--deep);border-color:var(--mist)}
+nav .btn{padding:8px 18px;font-size:14px}
 
-        * { box-sizing: border-box; }
+/* Hero Section */
+.hero{min-height:100svh;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:24px;padding-top:90px;position:relative}
+.hero h1{font:700 clamp(40px,5.4vw,68px)/1.06 var(--display);letter-spacing:-.03em;max-width:13ch}
+.hero p.lead{margin:22px 0 28px;max-width:46ch;color:var(--mist);font-size:18px}
+.actions{display:flex;gap:14px;flex-wrap:wrap}
+.pick{margin-top:36px}
+.pick small{display:block;color:var(--mist);font-size:13px;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{background:transparent;color:var(--ice);border:1px solid var(--line);border-radius:12px;padding:10px 16px;cursor:pointer;font:500 14px var(--body);text-align:left;transition:border-color .25s,background .25s,transform .15s}
+.chip span{display:block;font-size:12px;color:var(--mist);font-weight:400}
+.chip:hover{border-color:var(--mist);transform:translateY(-1px)}
+.chip[aria-pressed=true]{border-color:var(--accent);background:rgba(94,234,212,.1)}
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--md-sys-color-background);
-            color: var(--md-sys-color-on-background);
-            margin: 0;
-            padding: 16px;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
+.stage{position:relative;height:min(78vh,620px);min-height:380px}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:pan-y}
+.stage::before{content:"";position:absolute;inset:8% 4%;background:radial-gradient(closest-side,rgba(94,234,212,.16),transparent);filter:blur(36px)}
 
-        .container { width: 100%; max-width: 950px; display: flex; flex-direction: column; gap: 20px; }
-        
-        h1, h2, h3 { font-family: 'Google Sans', sans-serif; margin: 0; }
-        .title-medium { font-size: 22px; font-weight: 500; }
-        .title-small { font-size: 16px; font-weight: 500; }
-        .body-medium { font-size: 14px; font-weight: 400; color: #444746; }
+/* Sections General */
+section{padding:100px 0;border-top:1px solid var(--line)}
+h2{font:600 clamp(28px,3.4vw,42px)/1.15 var(--display);letter-spacing:-.02em}
+.sub{color:var(--mist);margin-top:12px;max-width:54ch;font-size:16px}
 
-        .app-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 4px; }
-        .brand-logo { display: flex; align-items: center; gap: 12px; color: var(--md-sys-color-primary); }
-        .brand-logo .material-symbols-outlined { font-size: 32px; }
+/* Flow Grid */
+.flow{display:grid;grid-template-columns:repeat(3,1fr);margin-top:52px;position:relative}
+.flow::before{content:"";position:absolute;top:19px;left:20px;right:20px;height:1px;background:linear-gradient(90deg,var(--teal),var(--violet))}
+.step{position:relative;padding-right:28px}
+.step i{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--ink);border:1px solid var(--teal);font:600 15px var(--mono);font-style:normal;color:var(--teal);position:relative}
+.step h3{font:600 19px var(--display);margin:18px 0 8px}
+.step p{color:var(--mist);font-size:15px}
 
-        .nav-container { 
-            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;
-            scrollbar-width: none;
-        }
-        .nav-container::-webkit-scrollbar { display: none; }
-        
-        .nav-chip {
-            display: flex; align-items: center; gap: 8px;
-            padding: 10px 18px;
-            background: transparent;
-            border: 1px solid var(--md-sys-color-outline-variant);
-            border-radius: var(--radius-pill);
-            color: var(--md-sys-color-on-background);
-            font-family: 'Google Sans', sans-serif;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
-        }
-        
-        .nav-chip.active {
-            background: var(--md-sys-color-primary-container);
-            color: var(--md-sys-color-on-primary-container);
-            border-color: transparent;
-        }
+/* Interactive Playground / API */
+.api{display:grid;grid-template-columns:.8fr 1.2fr;gap:48px;align-items:flex-start}
+.code-container{background:var(--deep);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,0.35)}
+.code-tabs{display:flex;background:rgba(6,24,29,0.7);border-bottom:1px solid var(--line);padding:4px 8px;gap:6px}
+.code-tab{padding:8px 14px;background:none;border:none;border-radius:8px;font:500 13px var(--mono);color:var(--mist);cursor:pointer;transition:all .2s}
+.code-tab.active{background:var(--deep);color:var(--teal)}
 
-        .nav-chip .material-symbols-outlined { font-size: 18px; }
+.code-header{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line);font:500 13px var(--mono);color:var(--mist)}
+.code-header button{background:none;border:1px solid var(--line);color:var(--ice);border-radius:8px;padding:5px 12px;font:500 12px var(--mono);cursor:pointer;transition:border-color .2s}
+.code-header button:hover{border-color:var(--teal)}
 
-        .tab-panel { display: none; animation: fadeIn 0.25s ease; }
-        .tab-panel.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+pre{padding:20px;overflow-x:auto;font:400 13px/1.7 var(--mono);color:#cfeff3;margin:0}
+pre b{font-weight:600;color:var(--accent)}
 
-        .md-card {
-            background: var(--md-sys-color-surface);
-            border: 1px solid var(--md-sys-color-outline-variant);
-            border-radius: var(--radius-card);
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+/* Live Interactive Tester inside Code Box */
+.live-runner{padding:20px;display:flex;flex-direction:column;gap:12px}
+.runner-input{width:100%;padding:12px 16px;background:var(--ink);border:1px solid var(--line);border-radius:12px;color:var(--ice);font:400 14px var(--mono);outline:none;resize:vertical}
+.runner-input:focus{border-color:var(--teal)}
+.runner-bar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.key-hint{font:400 12px var(--mono);color:var(--mist);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.key-hint strong{color:var(--teal)}
 
-        .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-group label { font-size: 12px; font-weight: 500; color: var(--md-sys-color-outline); padding-left: 4px; }
-        
-        input[type="text"], input[type="password"], select, textarea {
-            width: 100%;
-            padding: 14px 16px;
-            background: var(--md-sys-color-surface);
-            border: 1px solid var(--md-sys-color-outline);
-            border-radius: var(--radius-input);
-            font-family: 'Roboto', sans-serif;
-            font-size: 15px;
-            color: var(--md-sys-color-on-background);
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--md-sys-color-primary);
-            box-shadow: 0 0 0 1px var(--md-sys-color-primary);
-        }
+.runner-terminal{background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:16px;font:400 13px/1.6 var(--mono);max-height:300px;overflow-y:auto;display:none;white-space:pre-wrap;word-break:break-word}
+.runner-terminal img{max-width:100%;border-radius:8px;margin-top:10px;border:1px solid var(--line)}
 
-        .btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            padding: 12px 24px;
-            border-radius: var(--radius-pill);
-            font-family: 'Google Sans', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
-            transition: background 0.2s;
-        }
-        .btn-filled { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
-        .btn-filled:hover { background: #0842A0; }
-        .btn-tonal { background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-background); }
+/* Live Logs Telemetry */
+.logs-grid{display:grid;gap:12px;margin-top:32px}
+.log-card{background:var(--deep);border:1px solid var(--line);border-radius:14px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;font:400 13px var(--mono);gap:16px}
+.log-info{display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.log-prompt{color:var(--ice);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log-meta{color:var(--mist);font-size:12px;display:flex;gap:12px}
+.log-badge{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase}
+.log-badge.success{background:rgba(94,234,212,0.15);color:var(--teal)}
 
-        .list-item {
-            display: flex; align-items: flex-start; gap: 16px;
-            padding: 16px;
-            border-radius: 16px;
-            background: var(--md-sys-color-surface-container);
-            margin-bottom: 8px;
-        }
-        .list-icon {
-            display: flex; align-items: center; justify-content: center;
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            background: var(--md-sys-color-primary-container);
-            color: var(--md-sys-color-primary);
-        }
-        .list-content { flex: 1; }
-        .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-        .list-title { font-weight: 500; font-size: 14px; }
-        .list-meta { font-size: 12px; color: var(--md-sys-color-outline); }
-        .list-body { font-size: 13px; color: #444746; line-height: 1.4; word-break: break-word; }
+/* Features dl */
+dl{margin-top:48px;display:grid;grid-template-columns:1fr 1fr;column-gap:64px}
+dl div{padding:24px 0;border-top:1px solid var(--line)}
+dt{font:600 18px var(--display);margin-bottom:6px}
+dd{color:var(--mist);font-size:15px;max-width:42ch}
 
-        .badge { padding: 4px 10px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 500; }
-        .badge-image { background: #E0F2FE; color: #0369A1; }
-        .badge-vision { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
-        .badge-web { background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container); }
-        .badge-free { background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-background); }
+/* Modal for API Key Generation */
+.modal-overlay{position:fixed;inset:0;background:rgba(6,24,29,0.85);backdrop-filter:blur(8px);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.modal-overlay.active{opacity:1;pointer-events:auto}
+.modal{background:var(--deep);border:1px solid var(--line);border-radius:22px;padding:32px;max-width:480px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,0.6);position:relative}
+.modal h3{font:600 22px var(--display);margin-bottom:8px}
+.modal p{color:var(--mist);font-size:14px;margin-bottom:20px}
+.modal-close{position:absolute;top:20px;right:20px;background:none;border:none;color:var(--mist);font-size:22px;cursor:pointer}
+.modal-input{width:100%;padding:12px 16px;background:var(--ink);border:1px solid var(--line);border-radius:12px;color:var(--ice);font:400 14px var(--mono);outline:none;margin-bottom:14px}
+.modal-result{margin-top:16px;padding:14px;background:var(--ink);border:1px solid var(--line);border-radius:12px;font:500 13px var(--mono);display:none;word-break:break-all}
 
-        .output-box {
-            background: var(--md-sys-color-surface-container);
-            border-radius: var(--radius-input);
-            padding: 16px; font-family: monospace; font-size: 13px;
-            white-space: pre-wrap; word-break: break-word;
-            display: none;
-        }
-        
-        .code-block {
-            background: #1E1E1E; color: #D4D4D4;
-            padding: 16px; border-radius: var(--radius-input);
-            font-family: monospace; font-size: 12px;
-            overflow-x: auto; margin-top: 8px;
-        }
-        .code-keyword { color: #569CD6; }
-        .code-string { color: #CE9178; }
-    </style>
+/* Footer & Animation */
+.cta{text-align:center;padding:120px 0}
+.cta h2{margin:0 auto}
+.cta .sub{margin:14px auto 30px}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--mist);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+.load{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
+.load.d1{animation-delay:.12s}.load.d2{animation-delay:.24s}.load.d3{animation-delay:.36s}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}}
+
+@media (max-width:860px){
+  nav a:not(.btn){display:none}
+  .hero{grid-template-columns:1fr;padding-top:90px;gap:0}
+  .stage{order:-1;height:320px;min-height:0;margin-top:8px}
+  .flow{grid-template-columns:1fr;gap:36px}.flow::before{display:none}
+  .api{grid-template-columns:1fr;gap:32px}
+  dl{grid-template-columns:1fr}
+  section{padding:70px 0}
+}
+@media (prefers-reduced-motion:reduce){.load{animation:none}html{scroll-behavior:auto}}
+</style>
 </head>
 <body>
 
-<div class="container">
-    <header class="app-header">
-        <div class="brand-logo">
-            <span class="material-symbols-outlined">auto_awesome</span>
-            <div>
-                <h1 class="title-medium">Crystal AI</h1>
-                <div class="body-medium">Unified Edge Gateway</div>
-            </div>
-        </div>
-    </header>
+<header><div class="wrap">
+  <a class="logo" href="#top" aria-label="Crystal Provider home">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 1l10 8-10 16L3 9z" fill="none" stroke="#5eead4" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 9h20M13 1l-4 8 4 16 4-16z" fill="none" stroke="#a78bfa" stroke-width="1.2" stroke-linejoin="round"/></svg>
+    Crystal Provider
+  </a>
+  <nav>
+    <a href="#how">How it works</a>
+    <a href="#api">Playground</a>
+    <a href="#telemetry">Logs</a>
+    <a href="#features">Features</a>
+    <button class="btn primary" onclick="openKeyModal()">Get an API key</button>
+  </nav>
+</div></header>
 
-    <nav class="nav-container">
-        <button class="nav-chip active" onclick="switchTab('image', event)">
-            <span class="material-symbols-outlined">image</span> Image Generator
-        </button>
-        <button class="nav-chip" onclick="switchTab('vision', event)">
-            <span class="material-symbols-outlined">visibility</span> Vision Analyzer
-        </button>
-        <button class="nav-chip" onclick="switchTab('websearch', event)">
-            <span class="material-symbols-outlined">travel_explore</span> Web Search AI
-        </button>
-        <button class="nav-chip" onclick="switchTab('text', event)">
-            <span class="material-symbols-outlined">description</span> Text & Essays
-        </button>
-        <button class="nav-chip" onclick="switchTab('catalog', event)">
-            <span class="material-symbols-outlined">view_cozy</span> Models Catalog
-        </button>
-        <button class="nav-chip" onclick="switchTab('logs', event)">
-            <span class="material-symbols-outlined">receipt_long</span> Logs
-        </button>
-        <button class="nav-chip" onclick="switchTab('docs', event)">
-            <span class="material-symbols-outlined">menu_book</span> Docs
-        </button>
-        <button class="nav-chip" onclick="switchTab('keys', event)">
-            <span class="material-symbols-outlined">vpn_key</span> Key Manager
-        </button>
-    </nav>
-
-    <!-- TAB 1: IMAGE GENERATOR -->
-    <main id="tab-image" class="tab-panel active md-card">
-        <div>
-            <h2 class="title-medium">Image Generation Studio</h2>
-            <p class="body-medium">Dedicated tab for image models.</p>
-        </div>
-
-        <div class="input-group">
-            <label>Select Image Model</label>
-            <select id="imageModel">
-                <option value="dall-e-3" selected>dall-e-3 (Free High-Precision Proxy)</option>
-                <option value="@cf/black-forest-labs/flux-1-schnell">@cf/black-forest-labs/flux-1-schnell</option>
-                <option value="@cf/stabilityai/stable-diffusion-xl-base-1.0">@cf/stabilityai/stable-diffusion-xl-base-1.0</option>
-                <option value="@cf/bytedance/stable-diffusion-xl-lightning">@cf/bytedance/stable-diffusion-xl-lightning</option>
-                <option value="@cf/lykon/dreamshaper-8-lcm">@cf/lykon/dreamshaper-8-lcm</option>
-                <option value="@cf/segmind/portrait-plus">@cf/segmind/portrait-plus</option>
-            </select>
-        </div>
-
-        <div class="input-group">
-            <label>Crystal API Key</label>
-            <input type="text" class="globalApiKey" placeholder="cry_live_...">
-        </div>
-
-        <div class="input-group">
-            <label>Prompt</label>
-            <textarea id="imagePrompt" rows="4">Cyberpunk city street at night with neon signs, 8k resolution, photorealistic</textarea>
-        </div>
-
-        <button class="btn btn-filled" onclick="runImageGen()">
-            <span class="material-symbols-outlined">palette</span> Generate Image
-        </button>
-        <div id="imageResult" class="output-box"></div>
-    </main>
-
-    <!-- TAB 2: VISION ANALYZER -->
-    <main id="tab-vision" class="tab-panel md-card">
-        <div>
-            <h2 class="title-medium">Vision & Multimodal Studio</h2>
-            <p class="body-medium">Dedicated tab for visual analysis.</p>
-        </div>
-
-        <div class="input-group">
-            <label>Select Multimodal Model</label>
-            <select id="visionModel">
-                <option value="@cf/meta/llama-4-scout-17b-16e-instruct" selected>@cf/meta/llama-4-scout-17b-16e-instruct</option>
-                <option value="@cf/google/gemma-3-26b-it">@cf/google/gemma-3-26b-it</option>
-                <option value="@cf/mistralai/mistral-small-3.1-24b-instruct">@cf/mistralai/mistral-small-3.1-24b-instruct</option>
-            </select>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div class="input-group">
-                <label>Crystal API Key</label>
-                <input type="text" class="globalApiKey" placeholder="cry_live_...">
-            </div>
-            <div class="input-group">
-                <label>Image Source (Base64 / URL)</label>
-                <input type="text" id="visionImageInput" placeholder="data:image/jpeg;base64,...">
-            </div>
-        </div>
-
-        <div class="input-group">
-            <label>Instruction / Question</label>
-            <textarea id="visionPrompt" rows="3">Describe the contents of this image in detail and extract visible text.</textarea>
-        </div>
-
-        <button class="btn btn-filled" onclick="runVisionGen()">
-            <span class="material-symbols-outlined">search_check</span> Analyze Image
-        </button>
-        <div id="visionResult" class="output-box"></div>
-    </main>
-
-    <!-- TAB 3: WEB SEARCH AI -->
-    <main id="tab-websearch" class="tab-panel md-card">
-        <div>
-            <h2 class="title-medium">Agentic Web Search Studio</h2>
-            <p class="body-medium">Dedicated tab for live web retrieval.</p>
-        </div>
-
-        <div class="input-group">
-            <label>Select Agent Model</label>
-            <select id="webModel">
-                <option value="@cf/moonshot-ai/kimi-k2.7-code" selected>@cf/moonshot-ai/kimi-k2.7-code</option>
-                <option value="@cf/zhipu-ai/glm-4.7-flash">@cf/zhipu-ai/glm-4.7-flash</option>
-            </select>
-        </div>
-
-        <div class="input-group">
-            <label>Crystal API Key</label>
-            <input type="text" class="globalApiKey" placeholder="cry_live_...">
-        </div>
-
-        <div class="input-group">
-            <label>Search Query</label>
-            <textarea id="webPrompt" rows="3">What are the key technical updates in open-source AI models released recently?</textarea>
-        </div>
-
-        <button class="btn btn-filled" onclick="runWebSearchGen()">
-            <span class="material-symbols-outlined">public</span> Search & Retrieve
-        </button>
-        <div id="webResult" class="output-box"></div>
-    </main>
-
-    <!-- TAB 4: TEXT & ESSAYS -->
-    <main id="tab-text" class="tab-panel md-card">
-        <div>
-            <h2 class="title-medium">Text & Essay Writing Studio</h2>
-            <p class="body-medium">Dedicated tab for high-reasoning writing.</p>
-        </div>
-
-        <div class="input-group">
-            <label>Select Text Model</label>
-            <select id="textModel">
-                <option value="@cf/openai/gpt-oss-120b" selected>@cf/openai/gpt-oss-120b</option>
-                <option value="@cf/meta/llama-3.3-70b-instruct-fp8-fast">@cf/meta/llama-3.3-70b-instruct-fp8-fast</option>
-                <option value="@cf/deepseek-ai/deepseek-r1-distill-qwen-32b">@cf/deepseek-ai/deepseek-r1-distill-qwen-32b</option>
-            </select>
-        </div>
-
-        <div class="input-group">
-            <label>Crystal API Key</label>
-            <input type="text" class="globalApiKey" placeholder="cry_live_...">
-        </div>
-
-        <div class="input-group">
-            <label>Topic / Requirement</label>
-            <textarea id="textPrompt" rows="5">Write a comprehensive analytical essay explaining Mixture-of-Experts (MoE) neural architectures.</textarea>
-        </div>
-
-        <button class="btn btn-filled" onclick="runTextGen()">
-            <span class="material-symbols-outlined">article</span> Generate Response
-        </button>
-        <div id="textResult" class="output-box"></div>
-    </main>
-
-    <!-- TAB 5: MODELS CATALOG -->
-    <main id="tab-catalog" class="tab-panel md-card">
-        <div>
-            <h2 class="title-medium">Models Catalog</h2>
-            <p class="body-medium">Exact 1:1 inventory of all active models available in testing dropdowns.</p>
-        </div>
-
-        <h3 class="title-small" style="color:var(--md-sys-color-primary);">🎨 Image Generation Models</h3>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">dall-e-3</span>
-                    <span class="badge badge-image">Free Proxy</span>
-                </div>
-                <div class="list-body">Proxy generator delivering high-resolution DALL-E 3 output without API key limits.</div>
-            </div>
-        </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">@cf/black-forest-labs/flux-1-schnell</span>
-                    <span class="badge badge-free">Edge Image</span>
-                </div>
-                <div class="list-body">Fast 4-step diffusion model for high detail graphics generation.</div>
-            </div>
-        </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">@cf/stabilityai/stable-diffusion-xl-base-1.0</span>
-                    <span class="badge badge-free">Edge Image</span>
-                </div>
-                <div class="list-body">Base SDXL model for 1024x1024 high fidelity images.</div>
-            </div>
-        </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">@cf/bytedance/stable-diffusion-xl-lightning</span>
-                    <span class="badge badge-free">Edge Image</span>
-                </div>
-                <div class="list-body">Sub-second rapid output diffusion generator.</div>
-            </div>
-        </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">@cf/lykon/dreamshaper-8-lcm</span>
-                    <span class="badge badge-free">Edge Image</span>
-                </div>
-                <div class="list-body">Photorealistic fine-tuned image pipeline.</div>
-            </div>
-        </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">@cf/segmind/portrait-plus</span>
-                    <span class="badge badge-free">Edge Image</span>
-                </div>
-                <div class="list-body">Stylized portrait and artistic visual generator.</div>
-            </div>
-        </div>
-
-        <h3 class="title-small" style="color:var(--md-sys-color-primary); margin-top:12px;">👁️ Vision & Multimodal Models</h3>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">@cf/meta/llama-4-scout-17b-16e-instruct</span>
-                    <span class="badge badge-vision">Vision</span>
-                </div>
-                <div class="list-body">Multimodal MoE for visual analysis, OCR, and complex document interpretation.</div>
-            </div>
-        </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">@cf/google/gemma-3-26b-it</span>
-                    <span class="badge badge-vision">Vision</span>
-                </div>
-                <div class="list-body">Google open-weights multimodal vision and reasoning architecture.</div>
-            </div>
-        </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">@cf/mistralai/mistral-small-3.1-24b-instruct</span>
-                    <span class="badge badge-vision">Vision</span>
-                </div>
-                <div class="list-body">High-efficiency model for Base64 image parsing and long context analysis.</div>
-            </div>
-        </div>
-
-        <h3 class="title-small" style="color:var(--md-sys-color-primary); margin-top:12px;">🌐 Web Search & Agent Models</h3>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">@cf/moonshot-ai/kimi-k2.7-code</span>
-                    <span class="badge badge-web">Web Search</span>
-                </div>
-                <div class="list-body">Agent model optimized for tool calling and internet query synthesis.</div>
-            </div>
-        </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">@cf/zhipu-ai/glm-4.7-flash</span>
-                    <span class="badge badge-web">Web Search</span>
-                </div>
-                <div class="list-body">Long-context agent designed for real-time web retrieval.</div>
-            </div>
-        </div>
-
-        <h3 class="title-small" style="color:var(--md-sys-color-primary); margin-top:12px;">📄 Text & Reasoning Models</h3>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">@cf/openai/gpt-oss-120b</span>
-                    <span class="badge badge-free">Text</span>
-                </div>
-                <div class="list-body">120B parameter model for research and complex technical essays.</div>
-            </div>
-        </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">@cf/meta/llama-3.3-70b-instruct-fp8-fast</span>
-                    <span class="badge badge-free">Text</span>
-                </div>
-                <div class="list-body">Fast FP8 quant model for high throughput instruction following.</div>
-            </div>
-        </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="list-header">
-                    <span class="list-title">@cf/deepseek-ai/deepseek-r1-distill-qwen-32b</span>
-                    <span class="badge badge-free">Text</span>
-                </div>
-                <div class="list-body">Reasoning distilled model for mathematical and algorithmic problems.</div>
-            </div>
-        </div>
-    </main>
-
-    <!-- TAB 6: LOGS -->
-    <main id="tab-logs" class="tab-panel md-card">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <h2 class="title-medium">Telemetry Logs</h2>
-                <p class="body-medium">Real-time edge execution history.</p>
-            </div>
-            <button class="btn btn-tonal" onclick="fetchLogs()">
-                <span class="material-symbols-outlined">refresh</span> Refresh
-            </button>
-        </div>
-
-        <div id="logsContainer">
-            <p class="body-medium" style="text-align:center; padding: 20px;">Loading logs...</p>
-        </div>
-    </main>
-
-    <!-- TAB 7: DOCS -->
-    <main id="tab-docs" class="tab-panel md-card">
-        <div>
-            <h2 class="title-medium">API Integration Docs</h2>
-            <p class="body-medium">Implementation payloads for all available models.</p>
-        </div>
-
-        <div class="input-group">
-            <label>1. Image Generation Endpoint</label>
-            <div class="code-block">
-<span class="code-keyword">fetch</span>(<span class="code-string">"https://crystal-api.baddampujithareddy19.workers.dev/"</span>, {
-  method: <span class="code-string">"POST"</span>,
-  headers: {
-    <span class="code-string">"X-Crystal-Key"</span>: <span class="code-string">"cry_live_your_key"</span>,
-    <span class="code-string">"Content-Type"</span>: <span class="code-string">"application/json"</span>
-  },
-  body: JSON.stringify({
-    model: <span class="code-string">"dall-e-3"</span>, <span class="code-keyword">// or "@cf/black-forest-labs/flux-1-schnell"</span>
-    prompt: <span class="code-string">"Futuristic city render"</span>
-  })
-})</div>
-        </div>
-
-        <div class="input-group" style="margin-top: 12px;">
-            <label>2. Vision & Multimodal Analysis</label>
-            <div class="code-block">
-<span class="code-keyword">fetch</span>(<span class="code-string">"https://crystal-api.baddampujithareddy19.workers.dev/"</span>, {
-  method: <span class="code-string">"POST"</span>,
-  headers: {
-    <span class="code-string">"X-Crystal-Key"</span>: <span class="code-string">"cry_live_your_key"</span>,
-    <span class="code-string">"Content-Type"</span>: <span class="code-string">"application/json"</span>
-  },
-  body: JSON.stringify({
-    model: <span class="code-string">"@cf/meta/llama-4-scout-17b-16e-instruct"</span>,
-    prompt: <span class="code-string">"Analyze the visual structure of this image"</span>,
-    image: <span class="code-string">"data:image/png;base64,..."</span>
-  })
-})</div>
-        </div>
-
-        <div class="input-group" style="margin-top: 12px;">
-            <label>3. Web Search Retrieval</label>
-            <div class="code-block">
-<span class="code-keyword">fetch</span>(<span class="code-string">"https://crystal-api.baddampujithareddy19.workers.dev/"</span>, {
-  method: <span class="code-string">"POST"</span>,
-  headers: {
-    <span class="code-string">"X-Crystal-Key"</span>: <span class="code-string">"cry_live_your_key"</span>,
-    <span class="code-string">"Content-Type"</span>: <span class="code-string">"application/json"</span>
-  },
-  body: JSON.stringify({
-    model: <span class="code-string">"@cf/moonshot-ai/kimi-k2.7-code"</span>,
-    prompt: <span class="code-string">"Recent updates on space exploration"</span>,
-    web_search: <span class="code-keyword">true</span>
-  })
-})</div>
-        </div>
-    </main>
-
-    <!-- TAB 8: KEY MANAGER -->
-    <main id="tab-keys" class="tab-panel md-card">
-        <div>
-            <h2 class="title-medium">Access Key Manager</h2>
-            <p class="body-medium">Issue persistent authentication keys.</p>
-        </div>
-        
-        <div class="input-group">
-            <label>Admin Secret</label>
-            <input type="password" id="adminSecret" value="crystal_admin_2026">
-        </div>
-        
-        <button class="btn btn-filled" onclick="generateKey()">
-            <span class="material-symbols-outlined">add_circle</span> Issue New API Key
-        </button>
-        <div id="keyResult" class="output-box"></div>
-    </main>
+<main id="top">
+<!-- HERO -->
+<div class="wrap hero">
+  <div>
+    <h1 class="load">One key for every language model.</h1>
+    <p class="lead load d1">Crystal Provider serves Meta Llama 3.3 70B, Qwen Coder, and DALL-E 3 across Cloudflare's edge network. Zero cold starts, verified GPU telemetry.</p>
+    <div class="actions load d2">
+      <button class="btn primary" onclick="openKeyModal()">Get an API key</button>
+      <a class="btn ghost" href="#api">Run in Playground</a>
+    </div>
+    <div class="pick load d3">
+      <small>Pick a model to morph the crystal and swap parameters</small>
+      <div class="chips" id="chips"></div>
+    </div>
+  </div>
+  <div class="stage" id="stage"><canvas id="gl" aria-label="Rotating 3D crystal. Drag to turn it." role="img"></canvas></div>
 </div>
 
+<!-- HOW IT WORKS -->
+<section id="how"><div class="wrap">
+  <h2>From your app to the GPU in three steps</h2>
+  <p class="sub">Every call routes through Cloudflare Workers KV validation before reaching edge inference engines.</p>
+  <div class="flow">
+    <div class="step"><i>1</i><h3>Direct Endpoint Call</h3><p>Send a standard JSON payload with your <code>X-Crystal-Key</code> and target model ID.</p></div>
+    <div class="step"><i>2</i><h3>Edge Key Verification</h3><p>Cloudflare evaluates SHA-256 key digests in memory across 300+ edge colos within 2ms.</p></div>
+    <div class="step"><i>3</i><h3>Hardware Proof Delivery</h3><p>Receive text or image outputs with authentic <code>cf-ray</code>, colo IDs, and execution latency.</p></div>
+  </div>
+</div></section>
+
+<!-- INTERACTIVE API & PLAYGROUND -->
+<section id="api"><div class="wrap api">
+  <div>
+    <h2>Interactive Edge Playground</h2>
+    <p class="sub">Run live model queries right from your browser, or copy production-ready fetch requests directly into your application.</p>
+    <div style="margin-top:28px;">
+      <button class="btn ghost" onclick="openKeyModal()" style="font-size:13px; font-family:var(--mono);">🔑 Manage API Key</button>
+    </div>
+  </div>
+
+  <div class="code-container">
+    <div class="code-tabs">
+      <button class="code-tab active" id="tabPlayground" onclick="switchPanel('playground')">▶ Live Playground</button>
+      <button class="code-tab" id="tabSnippet" onclick="switchPanel('snippet')">JS Fetch</button>
+      <button class="code-tab" id="tabCurl" onclick="switchPanel('curl')">cURL</button>
+    </div>
+
+    <!-- Panel 1: Live Interactive Runner -->
+    <div id="panelPlayground" class="live-runner">
+      <textarea id="promptInput" class="runner-input" rows="3" placeholder="Enter prompt..."></textarea>
+      <div class="runner-bar">
+        <span class="key-hint" id="keyHintText">Key: <strong>Checking...</strong></span>
+        <button class="btn primary" id="runBtn" onclick="executeModel()" style="padding:8px 20px; font-size:13px;">Execute</button>
+      </div>
+      <div id="runnerTerminal" class="runner-terminal"></div>
+    </div>
+
+    <!-- Panel 2: JavaScript Snippet -->
+    <div id="panelSnippet" style="display:none;">
+      <div class="code-header"><span id="file">POST /</span><button id="copyJs" onclick="copySnippet('snip')">Copy</button></div>
+      <pre id="snip" tabindex="0"></pre>
+    </div>
+
+    <!-- Panel 3: cURL Snippet -->
+    <div id="panelCurl" style="display:none;">
+      <div class="code-header"><span>terminal</span><button id="copyCurl" onclick="copySnippet('snipCurl')">Copy</button></div>
+      <pre id="snipCurl" tabindex="0"></pre>
+    </div>
+  </div>
+</div></section>
+
+<!-- LIVE LOGS TELEMETRY -->
+<section id="telemetry"><div class="wrap">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+    <div>
+      <h2>Live Telemetry Feed</h2>
+      <p class="sub">Recent executions logged across global Cloudflare edge datacenters.</p>
+    </div>
+    <button class="btn ghost" onclick="fetchLiveLogs()" style="font-size:13px;">🔄 Refresh Logs</button>
+  </div>
+  <div class="logs-grid" id="logsContainer">
+    <div class="log-card"><span style="color:var(--mist);">Pulling recent activity logs...</span></div>
+  </div>
+</div></section>
+
+<!-- FEATURES -->
+<section id="features"><div class="wrap">
+  <h2>Engineered for developers</h2>
+  <dl>
+    <div><dt>Unified Protocol</dt><dd>Switch between Meta 70B, Qwen Coder, and DALL-E 3 by altering one JSON property.</dd></div>
+    <div><dt>Sub-Millisecond Auth</dt><dd>SHA-256 hashed API keys verified globally via Cloudflare KV with zero database latency.</dd></div>
+    <div><dt>Zero Cold Starts</dt><dd>Instant model invocation running directly on Cloudflare edge GPUs.</dd></div>
+    <div><dt>Hardware Signatures</dt><dd>Every response includes CF-Ray, datacenter city (Colo), and true execution metrics.</dd></div>
+  </dl>
+</div></section>
+
+<!-- CTA -->
+<section class="cta" id="start"><div class="wrap">
+  <h2>Generate your access key</h2>
+  <p class="sub">Instant free tier with 20,000,000 preloaded quota tokens.</p>
+  <button class="btn primary" onclick="openKeyModal()">Get an API key</button>
+</div></section>
+</main>
+
+<!-- API KEY MODAL -->
+<div class="modal-overlay" id="keyModal" onclick="closeKeyModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeKeyModal()">&times;</button>
+    <h3>Generate Crystal Key</h3>
+    <p>Enter the admin passphrase to create an authenticated API key.</p>
+    <input type="password" id="modalSecret" class="modal-input" placeholder="Admin Secret" value="crystal_admin_2026">
+    <button class="btn primary" onclick="generateApiKey()" style="width:100%;">Create Live Key</button>
+    <div id="modalOutput" class="modal-result"></div>
+  </div>
+</div>
+
+<footer><div class="wrap"><span>© <span id="yr"></span> Crystal Provider</span><span>Live Edge Network</span></div></footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-    const API_BASE_URL = "https://crystal-api.baddampujithareddy19.workers.dev";
+const API_BASE = "https://crystal-api.baddampujithareddy19.workers.dev";
 
-    function switchTab(tabId, evt) {
-        document.querySelectorAll('.nav-chip').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        
-        if (evt) evt.currentTarget.classList.add('active');
-        document.getElementById(`tab-${tabId}`).classList.add('active');
-        
-        if (tabId === 'logs') fetchLogs();
+const MODELS = [
+  {
+    id: '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+    name: 'Llama 3.3 70B',
+    kind: 'Flagship Chat',
+    type: 'text',
+    prompt: 'Explain edge computing and latency in one line.',
+    geo: () => new THREE.IcosahedronGeometry(1.35, 0),
+    color: 0x5eead4
+  },
+  {
+    id: '@cf/qwen/qwen2.5-coder-32b-instruct',
+    name: 'Qwen Coder',
+    kind: 'Code & Math',
+    type: 'text',
+    prompt: 'Write a high-performance debounce function in TypeScript.',
+    geo: () => new THREE.DodecahedronGeometry(1.3, 0),
+    color: 0x7dd3fc
+  },
+  {
+    id: '@cf/mistralai/mistral-small-3.1-24b-instruct',
+    name: 'Mistral Small',
+    kind: 'Fast Reasoning',
+    type: 'text',
+    prompt: 'State the three core laws of thermodynamics.',
+    geo: () => new THREE.OctahedronGeometry(1.6, 0),
+    color: 0xa78bfa
+  },
+  {
+    id: 'dall-e-3',
+    name: 'DALL-E 3',
+    kind: 'Image Generator',
+    type: 'image',
+    prompt: 'A glowing cyan geometric crystal floating inside a quantum core, 8k render',
+    geo: () => new THREE.TetrahedronGeometry(1.7, 0),
+    color: 0xf0abfc
+  },
+  {
+    id: '@cf/black-forest-labs/flux-1-schnell',
+    name: 'FLUX.1 Schnell',
+    kind: 'Edge Diffusion',
+    type: 'image',
+    prompt: 'A cyberpunk city skyline at night with neon lights, photorealistic',
+    geo: () => new THREE.TorusGeometry(1.1, 0.4, 8, 16),
+    color: 0x38bdf8
+  }
+];
+
+let cur = 0;
+const $ = s => document.querySelector(s);
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Initialize Key
+let savedKey = localStorage.getItem('crystal_key') || "";
+function updateKeyHint() {
+  const hint = $('#keyHintText');
+  if (savedKey) {
+    hint.innerHTML = `Key: <strong>${savedKey.substring(0, 12)}...</strong>`;
+  } else {
+    hint.innerHTML = `Key: <span style="color:var(--rose);">None (Click 'Get Key')</span>`;
+  }
+}
+updateKeyHint();
+
+/* Chips & Snippets */
+const chips = $('#chips'), snip = $('#snip'), snipCurl = $('#snipCurl'), promptInput = $('#promptInput');
+
+MODELS.forEach((m, i) => {
+  const b = document.createElement('button');
+  b.className = 'chip';
+  b.type = 'button';
+  b.innerHTML = m.name + '<span>' + m.kind + '</span>';
+  b.onclick = () => select(i);
+  chips.appendChild(b);
+});
+
+function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+function render() {
+  const m = MODELS[cur];
+  promptInput.value = m.prompt;
+
+  // Render JS Fetch Snippet
+  snip.innerHTML = esc(`const res = await fetch("${API_BASE}/", {
+  method: "POST",
+  headers: {
+    "X-Crystal-Key": "${savedKey || 'YOUR_CRYSTAL_KEY'}",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "`) + '<b>' + m.id + '</b>' + esc(`",
+    prompt: "${m.prompt}"
+  })
+});
+const data = await res.json();
+console.log(data.result);`);
+
+  // Render cURL Snippet
+  snipCurl.innerHTML = esc(`curl -X POST "${API_BASE}/" \\
+  -H "X-Crystal-Key: ${savedKey || 'YOUR_CRYSTAL_KEY'}" \\
+  -H "Content-Type: application/json" \\
+  -d '{"model": "${m.id}", "prompt": "${m.prompt}"}'`);
+
+  chips.querySelectorAll('.chip').forEach((c, i) => c.setAttribute('aria-pressed', i === cur));
+  document.documentElement.style.setProperty('--accent', '#' + m.color.toString(16).padStart(6, '0'));
+}
+
+function switchPanel(panel) {
+  $('#panelPlayground').style.display = panel === 'playground' ? 'flex' : 'none';
+  $('#panelSnippet').style.display = panel === 'snippet' ? 'block' : 'none';
+  $('#panelCurl').style.display = panel === 'curl' ? 'block' : 'none';
+
+  $('#tabPlayground').className = 'code-tab' + (panel === 'playground' ? ' active' : '');
+  $('#tabSnippet').className = 'code-tab' + (panel === 'snippet' ? ' active' : '');
+  $('#tabCurl').className = 'code-tab' + (panel === 'curl' ? ' active' : '');
+}
+
+async function copySnippet(id) {
+  const text = document.getElementById(id).textContent;
+  await navigator.clipboard.writeText(text);
+  alert("Snippet copied to clipboard!");
+}
+
+/* Modal Functions */
+function openKeyModal() { $('#keyModal').classList.add('active'); }
+function closeKeyModal(e) {
+  if (!e || e.target === $('#keyModal') || e.target.classList.contains('modal-close')) {
+    $('#keyModal').classList.remove('active');
+  }
+}
+
+async function generateApiKey() {
+  const secret = $('#modalSecret').value.trim();
+  const out = $('#modalOutput');
+  out.style.display = 'block';
+  out.innerText = 'Creating key on Cloudflare KV...';
+
+  try {
+    const res = await fetch(`${API_BASE}/v1/create-key`, {
+      method: "POST",
+      headers: { "X-Admin-Secret": secret }
+    });
+    const data = await res.json();
+    if (data.status === "success") {
+      savedKey = data.api_key;
+      localStorage.setItem('crystal_key', savedKey);
+      out.innerHTML = `Active Key Created:<br><strong style="color:var(--teal)">${data.api_key}</strong><br><span style="font-size:11px;color:var(--mist);">Saved to browser storage.</span>`;
+      updateKeyHint();
+      render();
+    } else {
+      out.innerText = "Error: " + (data.error || "Failed");
     }
+  } catch (err) {
+    out.innerText = "Network Error connecting to Worker.";
+  }
+}
 
-    function getApiKey() {
-        const keys = document.querySelectorAll('.globalApiKey');
-        for (let k of keys) {
-            if (k.value.trim()) return k.value.trim();
-        }
-        return "";
-    }
+/* Execute Model from Playground */
+async function executeModel() {
+  if (!savedKey) {
+    openKeyModal();
+    return;
+  }
 
-    function syncKeys(val) {
-        document.querySelectorAll('.globalApiKey').forEach(k => k.value = val);
-    }
+  const m = MODELS[cur];
+  const prompt = $('#promptInput').value.trim();
+  const terminal = $('#runnerTerminal');
+  const runBtn = $('#runBtn');
 
-    document.querySelectorAll('.globalApiKey').forEach(k => {
-        k.addEventListener('input', (e) => syncKeys(e.target.value));
+  terminal.style.display = 'block';
+  terminal.innerHTML = `<span style="color:var(--mist)">Connecting to Cloudflare edge GPU (${m.id})...</span>`;
+  runBtn.disabled = true;
+  runBtn.innerText = "Running...";
+
+  try {
+    const res = await fetch(`${API_BASE}/`, {
+      method: "POST",
+      headers: {
+        "X-Crystal-Key": savedKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: m.id,
+        prompt: prompt
+      })
     });
 
-    async function sendRequest(model, prompt, image = null, webSearch = false, outputElemId) {
-        const apiKey = getApiKey();
-        const out = document.getElementById(outputElemId);
+    const data = await res.json();
+    if (data.status === "success") {
+      const stats = `[Latency: ${data.verification?.gpu_execution_latency || 'N/A'}] [Colo: ${data.verification?.datacenter_colo || 'Edge'}] [Ray: ${data.verification?.authentic_cf_ray || 'Live'}]\n\n`;
 
-        if (!apiKey) return alert("Please enter your Crystal API Key.");
-
-        out.style.display = "block";
-        out.innerHTML = `Executing task via ${model}...`;
-
-        try {
-            const res = await fetch(`${API_BASE_URL}/`, {
-                method: "POST",
-                headers: { "X-Crystal-Key": apiKey, "Content-Type": "application/json" },
-                body: JSON.stringify({ model, prompt, image, web_search: webSearch })
-            });
-
-            const data = await res.json();
-            if (data.status === "success") {
-                if (data.type === "image") {
-                    out.innerHTML = `<strong>[Model]:</strong> ${data.model_used}<br><img src="${data.result}" style="width:100%; max-width:500px; border-radius:16px; margin-top:12px;"/>`;
-                } else {
-                    out.innerText = `[Model]: ${data.model_used}\n[Latency]: ${data.verification?.gpu_execution_latency}\n\n${data.result}`;
-                }
-            } else {
-                out.innerText = "Error: " + (data.error || "Execution failed");
-            }
-        } catch (e) {
-            out.innerText = "Network execution error.";
-        }
+      if (data.type === "image" || (typeof data.result === "string" && data.result.startsWith("http"))) {
+        terminal.innerHTML = `<span style="color:var(--teal)">${stats}</span><img src="${data.result}" alt="Generated Image"/>`;
+      } else {
+        terminal.innerHTML = `<span style="color:var(--teal)">${stats}</span>${esc(data.result)}`;
+      }
+      setTimeout(fetchLiveLogs, 1000);
+    } else {
+      terminal.innerHTML = `<span style="color:var(--rose)">Error: ${data.error || 'Execution failed'}</span>`;
     }
+  } catch (err) {
+    terminal.innerHTML = `<span style="color:var(--rose)">Network error reaching endpoint.</span>`;
+  } finally {
+    runBtn.disabled = false;
+    runBtn.innerText = "Execute";
+  }
+}
 
-    function runImageGen() {
-        const model = document.getElementById("imageModel").value;
-        const prompt = document.getElementById("imagePrompt").value;
-        sendRequest(model, prompt, null, false, "imageResult");
+/* Fetch Recent Logs */
+async function fetchLiveLogs() {
+  const container = $('#logsContainer');
+  try {
+    const res = await fetch(`${API_BASE}/v1/requests`);
+    const data = await res.json();
+    if (data.requests && data.requests.length > 0) {
+      container.innerHTML = data.requests.slice(0, 5).map(r => `
+        <div class="log-card">
+          <div class="log-info">
+            <div class="log-prompt">${esc(r.prompt || 'Empty')}</div>
+            <div class="log-meta">
+              <span>🕒 ${r.timestamp}</span>
+              <span>📍 ${r.country || 'Edge'} (${r.colo || 'CF'})</span>
+              <span>🆔 ${r.cfRay ? r.cfRay.substring(0, 10) + '...' : 'N/A'}</span>
+            </div>
+          </div>
+          <div>
+            <span class="log-badge success">${r.latency}</span>
+          </div>
+        </div>
+      `).join('');
+    } else {
+      container.innerHTML = `<div class="log-card"><span style="color:var(--mist)">No recent requests logged in KV. Execute one in the playground!</span></div>`;
     }
+  } catch (e) {
+    container.innerHTML = `<div class="log-card"><span style="color:var(--rose)">Failed to fetch live logs.</span></div>`;
+  }
+}
 
-    function runVisionGen() {
-        const model = document.getElementById("visionModel").value;
-        const prompt = document.getElementById("visionPrompt").value;
-        const image = document.getElementById("visionImageInput").value.trim();
-        sendRequest(model, prompt, image || null, false, "visionResult");
-    }
+/* 3D Crystal Graphics Engine */
+const canvas = $('#gl'), stage = $('#stage');
+const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }); } catch (e) { renderer = null; }
 
-    function runWebSearchGen() {
-        const model = document.getElementById("webModel").value;
-        const prompt = document.getElementById("webPrompt").value;
-        sendRequest(model, prompt, null, true, "webResult");
-    }
+if (!renderer) {
+  stage.style.display = 'none';
+} else {
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(38, 1, .1, 50);
+  cam.position.set(0, 0, 6.4);
+  scene.add(new THREE.AmbientLight(0x88aabb, .55));
+  const l1 = new THREE.PointLight(0x5eead4, 2.2, 30); l1.position.set(4, 3, 5);
+  const l2 = new THREE.PointLight(0xa78bfa, 2.2, 30); l2.position.set(-5, -2, 3);
+  const l3 = new THREE.DirectionalLight(0xffffff, .6); l3.position.set(0, 5, 4);
+  scene.add(l1, l2, l3);
 
-    function runTextGen() {
-        const model = document.getElementById("textModel").value;
-        const prompt = document.getElementById("textPrompt").value;
-        sendRequest(model, prompt, null, false, "textResult");
-    }
+  const group = new THREE.Group(); scene.add(group);
+  const mat = new THREE.MeshStandardMaterial({ color: MODELS[0].color, flatShading: true, metalness: .55, roughness: .16, transparent: true, opacity: .92 });
+  const edgeMat = new THREE.LineBasicMaterial({ color: 0xe8fbff, transparent: true, opacity: .7 });
+  let mesh = new THREE.Mesh(MODELS[0].geo(), mat), edges = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry), edgeMat);
+  group.add(mesh, edges);
 
-    async function fetchLogs() {
-        const container = document.getElementById("logsContainer");
-        container.innerHTML = `<p class="body-medium" style="text-align:center;">Fetching telemetry...</p>`;
-        
-        try {
-            const res = await fetch(`${API_BASE_URL}/v1/requests`);
-            const data = await res.json();
-            if (data.requests && data.requests.length > 0) {
-                container.innerHTML = data.requests.map(r => `
-                    <div class="list-item">
-                        <div class="list-icon">
-                            <span class="material-symbols-outlined">${r.type === 'image' ? 'image' : 'chat'}</span>
-                        </div>
-                        <div class="list-content">
-                            <div class="list-header">
-                                <span class="list-title">${r.model}</span>
-                                <span class="badge badge-free">${r.latency}</span>
-                            </div>
-                            <div class="list-body">"${r.prompt}"</div>
-                            <div class="list-meta" style="margin-top:4px;">${r.timestamp} • ${r.country || 'N/A'} • RAY: ${r.cfRay}</div>
-                        </div>
-                    </div>
-                `).join('');
-            } else { container.innerHTML = `<p class="body-medium" style="text-align:center;">No logs recorded.</p>`; }
-        } catch(e) { container.innerHTML = `<p class="body-medium" style="text-align:center; color:red;">Failed to load logs.</p>`; }
-    }
+  const shards = [];
+  for (let i = 0; i < 7; i++) {
+    const s = new THREE.Mesh(new THREE.OctahedronGeometry(.11 + Math.random() * .1, 0), new THREE.MeshStandardMaterial({ color: 0xcffafe, flatShading: true, metalness: .6, roughness: .2 }));
+    s.userData = { r: 2.3 + Math.random() * 1.1, a: Math.random() * 6.28, sp: .15 + Math.random() * .25, y: (Math.random() - .5) * 2.4 };
+    scene.add(s); shards.push(s);
+  }
 
-    async function generateKey() {
-        const secret = document.getElementById("adminSecret").value;
-        const out = document.getElementById("keyResult");
-        out.style.display = "block";
-        out.innerHTML = "Generating key...";
-        try {
-            const res = await fetch(`${API_BASE_URL}/v1/create-key`, { method: "POST", headers: { "X-Admin-Secret": secret } });
-            const data = await res.json();
-            if (data.status === "success") {
-                out.innerHTML = `Created API Key:<br><strong>${data.api_key}</strong>`;
-                syncKeys(data.api_key);
-            } else { out.innerText = "Error: " + data.error; }
-        } catch(e) { out.innerText = "Failed to generate key."; }
-    }
+  const N = 220, pos = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) {
+    const r = 3 + Math.random() * 4, t = Math.random() * 6.28, p = Math.acos(2 * Math.random() - 1);
+    pos[i * 3] = r * Math.sin(p) * Math.cos(t); pos[i * 3 + 1] = r * Math.sin(p) * Math.sin(t); pos[i * 3 + 2] = r * Math.cos(p) - 2;
+  }
+  const dg = new THREE.BufferGeometry(); dg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const dust = new THREE.Points(dg, new THREE.PointsMaterial({ color: 0x8fb3ba, size: .03, transparent: true, opacity: .6 }));
+  scene.add(dust);
+
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false);
+    cam.aspect = w / h;
+    cam.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(stage); resize();
+
+  let tx = 0, ty = 0, dx = 0, dy = 0, drag = false, px = 0, py = 0;
+  canvas.addEventListener('pointerdown', e => { drag = true; px = e.clientX; py = e.clientY; canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing'; });
+  canvas.addEventListener('pointerup', () => { drag = false; canvas.style.cursor = 'grab'; });
+  canvas.addEventListener('pointermove', e => {
+    if (drag) { dy += (e.clientX - px) * .01; dx += (e.clientY - py) * .01; px = e.clientX; py = e.clientY; }
+    else { const r = canvas.getBoundingClientRect(); tx = ((e.clientY - r.top) / r.height - .5) * .5; ty = ((e.clientX - r.left) / r.width - .5) * .7; }
+  });
+
+  let pop = 1; const target = new THREE.Color(MODELS[0].color);
+  window.swap = function () {
+    const m = MODELS[cur];
+    mesh.geometry.dispose(); edges.geometry.dispose();
+    mesh.geometry = m.geo(); edges.geometry = new THREE.EdgesGeometry(mesh.geometry);
+    target.setHex(m.color); pop = .55;
+  };
+
+  const clock = new THREE.Clock(); let spin = 0;
+  function frame() {
+    const dt = clock.getDelta(), t = clock.elapsedTime;
+    if (!reduce) { spin += dt * .35; pop += (1 - pop) * Math.min(dt * 6, 1); } else { pop = 1; }
+    mat.color.lerp(target, Math.min(dt * 6, 1));
+    group.rotation.y = spin + dy + ty; group.rotation.x = .35 + dx + tx;
+    group.position.y = reduce ? 0 : Math.sin(t * .9) * .12;
+    group.scale.setScalar(pop);
+    l1.color.copy(mat.color);
+    shards.forEach(s => {
+      const d = s.userData; if (!reduce) d.a += dt * d.sp;
+      s.position.set(Math.cos(d.a) * d.r, d.y + Math.sin(d.a * 2) * .15, Math.sin(d.a) * d.r * .6);
+      s.rotation.x += dt; s.rotation.y += dt * .7;
+    });
+    dust.rotation.y = reduce ? 0 : t * .02;
+    renderer.render(scene, cam);
+    if (!reduce) requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+function select(i) {
+  cur = i;
+  render();
+  if (window.swap) swap();
+}
+
+render();
+fetchLiveLogs();
 </script>
 </body>
 </html>
