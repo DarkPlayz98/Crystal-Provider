@@ -22,10 +22,11 @@ export default {
           headers: { ...corsHeaders, "Content-Type": "application/json" }
         });
       }
+
       const array = new Uint8Array(16);
       crypto.getRandomValues(array);
       const rawApiKey = `cry_live_${Array.from(array).map(b => b.toString(16).padStart(2, "0")).join("")}`;
-      
+
       const encoder = new TextEncoder();
       const hashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(rawApiKey));
       const keyHash = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
@@ -52,10 +53,10 @@ export default {
       });
     }
 
-    // 3. Authenticate Crystal API Key
+    // 3. Authenticate Key
     const apiKey = (request.headers.get("X-Crystal-Key") || "").trim();
     if (!apiKey.startsWith("cry_live_")) {
-      return new Response(JSON.stringify({ error: "Invalid key format. Use X-Crystal-Key header." }), {
+      return new Response(JSON.stringify({ error: "Invalid API key format. Use X-Crystal-Key header." }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -74,10 +75,9 @@ export default {
       });
     }
 
-    // 4. Parse Request
+    // 4. Parse Request Payload
     let userPrompt = "Hello!";
     let imageBase64 = null;
-    let webSearchEnabled = false;
     let maxTokens = 4096;
     let temperature = 0.6;
     let model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
@@ -87,7 +87,6 @@ export default {
         const body = await request.json();
         if (body.prompt) userPrompt = body.prompt;
         if (body.image) imageBase64 = body.image;
-        if (body.web_search !== undefined) webSearchEnabled = body.web_search;
         if (body.max_tokens) maxTokens = parseInt(body.max_tokens);
         if (body.temperature !== undefined) temperature = parseFloat(body.temperature);
         if (body.model) model = body.model;
@@ -103,121 +102,131 @@ export default {
     ];
 
     const isDalle3 = model === "dall-e-3";
-    const isImageModel = isDalle3 || cfImageModels.includes(model);
+    const isImageGen = isDalle3 || cfImageModels.includes(model);
+    const isVision = model === "@cf/meta/llama-3.2-11b-vision-instruct" || Boolean(imageBase64);
 
-    // 5. Current 2026 Timeline Context
-    const now = new Date();
-    const liveDateStr = now.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      timeZone: "UTC"
-    });
-    const liveYear = now.getUTCFullYear();
+    let finalResult = "";
+    let executionMode = "Cloudflare Edge GPU";
 
-    // 6. Execution Pipeline
+    // 5. Execution with Zero-Neuron Fallback
     try {
-      let finalResult = "";
-
       if (isDalle3) {
-        const encodedPrompt = encodeURIComponent(userPrompt);
+        // DALL-E 3 zero-neuron proxy
+        executionMode = "Unmetered Image Proxy";
         const seed = Math.floor(Math.random() * 999999);
-        finalResult = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=dalle-3&seed=${seed}&nologo=true`;
+        finalResult = `https://image.pollinations.ai/prompt/${encodeURIComponent(userPrompt)}?model=dalle-3&seed=${seed}&nologo=true`;
 
-      } else if (isImageModel) {
-        const imageStream = await env.AI.run(model, { prompt: userPrompt });
-        const arrayBuffer = await new Response(imageStream).arrayBuffer();
-        let binary = "";
-        const bytes = new Uint8Array(arrayBuffer);
-        for (let i = 0; i < bytes.byteLength; i++) {
-          binary += String.fromCharCode(bytes[i]);
+      } else if (isImageGen) {
+        // Try Cloudflare Edge Diffusion first
+        try {
+          const imageStream = await env.AI.run(model, { prompt: userPrompt });
+          const arrayBuffer = await new Response(imageStream).arrayBuffer();
+          let binary = "";
+          const bytes = new Uint8Array(arrayBuffer);
+          for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+          }
+          finalResult = `data:image/png;base64,${btoa(binary)}`;
+        } catch (cfErr) {
+          // Zero-Neuron Failover for Images
+          executionMode = "Unmetered Zero-Neuron Image Failover";
+          let fallbackImgModel = "flux";
+          if (model.includes("lightning") || model.includes("turbo")) fallbackImgModel = "turbo";
+          const seed = Math.floor(Math.random() * 999999);
+          finalResult = `https://image.pollinations.ai/prompt/${encodeURIComponent(userPrompt)}?model=${fallbackImgModel}&seed=${seed}&nologo=true`;
         }
-        finalResult = `data:image/png;base64,${btoa(binary)}`;
+
+      } else if (isVision && imageBase64) {
+        // Multimodal Vision Execution
+        try {
+          const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
+          const binaryString = atob(base64Data);
+          const imageBytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            imageBytes[i] = binaryString.charCodeAt(i);
+          }
+
+          const visionResponse = await env.AI.run("@cf/meta/llama-3.2-11b-vision-instruct", {
+            prompt: userPrompt,
+            image: [...imageBytes],
+            max_tokens: maxTokens
+          });
+
+          finalResult = visionResponse.description || visionResponse.response || JSON.stringify(visionResponse);
+        } catch (cfErr) {
+          // Fallback for Vision
+          executionMode = "Zero-Neuron Vision Failover";
+          const fallbackRes = await fetch("https://text.pollinations.ai/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              messages: [
+                { role: "system", content: "You are Crystal AI. Analyze user requests accurately." },
+                { role: "user", content: `[Image Attached] ${userPrompt}` }
+              ],
+              model: "gemini",
+              seed: Math.floor(Math.random() * 999999)
+            })
+          });
+          finalResult = await fallbackRes.text();
+        }
 
       } else {
-        // 7. Unblocked Live Knowledge Retrieval (Wikipedia Open API)
-        let liveSearchData = "";
-        const needsSearch = webSearchEnabled || 
-                            model.includes("kimi") || 
-                            model.includes("glm") || 
-                            /latest|iphone|phone|current|today|year|news|release|who is/i.test(userPrompt);
+        // High-Parameter Text & Reasoning Models
+        try {
+          const aiResponse = await env.AI.run(model, {
+            messages: [
+              { role: "system", content: "You are Crystal AI, a premier intelligence engine. Answer authoritatively, concisely, and directly." },
+              { role: "user", content: userPrompt }
+            ],
+            max_tokens: maxTokens,
+            temperature: temperature
+          });
 
-        if (needsSearch) {
-          try {
-            // Clean prompt down to raw search keywords
-            const cleanQuery = userPrompt.replace(/what is the|who is the|tell me about|how much is/gi, "").trim();
-            const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQuery)}&utf8=&format=json&origin=*`;
-            
-            const wikiRes = await fetch(wikiUrl, {
-              headers: { "User-Agent": "CrystalAI/2.0 (developer@crystal.internal)" }
-            });
+          finalResult = aiResponse.response || aiResponse.choices?.[0]?.message?.content || "";
+        } catch (cfErr) {
+          // Zero-Neuron Text Failover
+          executionMode = "Unmetered Zero-Neuron Text Failover";
+          let fallbackModel = "openai-large";
 
-            if (wikiRes.ok) {
-              const wikiJson = await wikiRes.json();
-              const snippets = (wikiJson.query?.search || []).slice(0, 4).map(item => {
-                const text = item.snippet.replace(/<[^>]+>/g, "").trim();
-                return `• ${item.title}: ${text}`;
-              });
+          const m = model.toLowerCase();
+          if (m.includes("deepseek") || m.includes("r1")) fallbackModel = "deepseek";
+          else if (m.includes("coder") || m.includes("qwen")) fallbackModel = "qwen-coder";
+          else if (m.includes("mistral")) fallbackModel = "mistral";
 
-              if (snippets.length > 0) {
-                liveSearchData = `\n\n[VERIFIED LIVE ENCYCLOPEDIC GROUND TRUTH DATA]:\n${snippets.join("\n")}`;
-              }
-            }
-          } catch (err) {}
+          const fallbackRes = await fetch("https://text.pollinations.ai/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              messages: [
+                { role: "system", content: "You are Crystal AI, operating at frontier intelligence. Answer directly, logically, and concisely." },
+                { role: "user", content: userPrompt }
+              ],
+              model: fallbackModel,
+              seed: Math.floor(Math.random() * 999999)
+            })
+          });
+
+          finalResult = await fallbackRes.text();
         }
-
-        // 8. Strict 2026 Anchor Instructions
-        const systemInstruction = `You are Crystal AI, a frontier-class intelligence engine.
-TIMELINE ANCHOR:
-- Current Reality Date: ${liveDateStr}.
-- Current Year: ${liveYear}.
-- You operate on the live ${liveYear} timeline.
-- Never state that your knowledge cuts off in 2023 or 2024.
-- If live data is provided below, treat it as ground truth.${liveSearchData}`;
-
-        let messagesPayload = [];
-        if (imageBase64) {
-          messagesPayload = [
-            { role: "system", content: systemInstruction },
-            {
-              role: "user",
-              content: [
-                { type: "text", text: userPrompt },
-                { type: "image_url", image_url: { url: imageBase64 } }
-              ]
-            }
-          ];
-        } else {
-          messagesPayload = [
-            { role: "system", content: systemInstruction },
-            { role: "user", content: userPrompt }
-          ];
-        }
-
-        const aiResponse = await env.AI.run(model, {
-          messages: messagesPayload,
-          max_tokens: maxTokens,
-          temperature: temperature
-        });
-
-        finalResult = aiResponse.response || aiResponse.choices?.[0]?.message?.content || "";
       }
 
       const duration = Date.now() - startTime;
       const cfRay = request.headers.get("cf-ray") || "N/A";
       const datacenterColo = request.cf?.colo || "UNKNOWN";
-      const clientCountry = request.cf?.country || request.headers.get("cf-ipcountry") || "XX";
+      const clientCountry = request.cf?.country || "XX";
 
+      // 6. Save Activity Telemetry
       const logItem = {
         timestamp: new Date().toLocaleTimeString(),
         model: model,
-        type: isImageModel ? "image" : "text",
+        type: isImageGen ? "image" : "text",
         prompt: userPrompt,
         country: clientCountry,
         colo: datacenterColo,
         cfRay: cfRay,
-        latency: `${duration}ms`
+        latency: `${duration}ms`,
+        mode: executionMode
       };
 
       try {
@@ -230,10 +239,10 @@ TIMELINE ANCHOR:
 
       return new Response(JSON.stringify({
         status: "success",
-        type: isImageModel ? "image" : "text",
+        type: isImageGen ? "image" : "text",
         model_used: model,
-        timeline: { anchor_date: liveDateStr, anchor_year: liveYear },
         verification: {
+          engine_mode: executionMode,
           authentic_cf_ray: cfRay,
           datacenter_colo: datacenterColo,
           gpu_execution_latency: `${duration}ms`
@@ -244,10 +253,10 @@ TIMELINE ANCHOR:
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
 
-    } catch (error) {
+    } catch (globalError) {
       return new Response(JSON.stringify({
-        error: "AI Engine Execution Failed",
-        details: error.message
+        error: "Execution Failed",
+        details: globalError.message
       }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -255,4 +264,3 @@ TIMELINE ANCHOR:
     }
   }
 };
-
